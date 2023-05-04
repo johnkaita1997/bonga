@@ -1,0 +1,62 @@
+{% extends 'cartoonbase.html' %}
+{% load static %}
+
+{% block cartooncontent %}
+    <div class="container-fluid">
+        <main class="tm-main">
+            <br>
+            <p style="font-size: 20px; color: black">ILLUSTRATIONS</p>
+
+            <div class="row tm-row">
+
+                {% for value in summary.illustrationnames.values %}
+
+                    <article class="col-12 col-md-6 tm-post">
+
+                        <h2 class="tm-pt-30 tm-color-primary tm-post-title">{{ value.name }}</h2>
+
+                        <a href="{% url 'illustrationcontentpage' illustrationname=value.name %}"
+                           class="effect-lily tm-post-link tm-pt-60">
+                            <div class="tm-post-link-inner">
+                                <img src="{{ value.image }}" alt="Image" class="" width="400" height="650">
+                            </div>
+                        </a>
+                        {#                    <p class="tm-pt-30">#}
+                        {#                        {{ value.description }}#}
+                        {#                    </p>#}
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+
+            {#            <div class="row tm-row tm-mt-100 tm-mb-75">#}
+{#                <div class="tm-prev-next-wrapper">#}
+{#                    <a href="#" class="mb-2 tm-btn tm-btn-primary tm-prev-next disabled tm-mr-20">Prev</a>#}
+{#                    <a href="#" class="mb-2 tm-btn tm-btn-primary tm-prev-next">Next</a>#}
+{#                </div>#}
+{#                <div class="tm-paging-wrapper">#}
+{#                    <span class="d-inline-block mr-3">Page</span>#}
+{#                    <nav class="tm-paging-nav d-inline-block">#}
+{#                        <ul>#}
+{#                            <li class="tm-paging-item active">#}
+{#                                <a href="#" class="mb-2 tm-btn tm-paging-link">1</a>#}
+{#                            </li>#}
+{#                            <li class="tm-paging-item">#}
+{#                                <a href="#" class="mb-2 tm-btn tm-paging-link">2</a>#}
+{#                            </li>#}
+{#                            <li class="tm-paging-item">#}
+{#                                <a href="#" class="mb-2 tm-btn tm-paging-link">3</a>#}
+{#                            </li>#}
+{#                            <li class="tm-paging-item">#}
+{#                                <a href="#" class="mb-2 tm-btn tm-paging-link">4</a>#}
+{#                            </li>#}
+{#                        </ul>#}
+{#                    </nav>#}
+{#                </div>#}
+{#            </div>#}
+        </main>
+    </div>
+
+{% endblock %}

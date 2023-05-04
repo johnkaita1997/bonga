@@ -1,0 +1,552 @@
+{% load static %}
+{% if message %}
+    <script>
+        alert('{{message}}')
+    </script>
+{% endif %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Unsubscribed!</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="{% static 'assets/img/small.png' %}" rel="icon">
+    <link href="{% static 'assets/img/small.png' %}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+          rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{% static 'assets/vendor/animate.css/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+
+    <!-- Template Main CSS File -->
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+
+    <!-- =======================================================
+    * Template Name: Sailor - v4.7.0
+    * Template URL: https://bootstrapmade.com/sailor-free-bootstrap-theme/
+    * Author: BootstrapMade.com
+    * License: https://bootstrapmade.com/license/
+    ======================================================== -->
+
+    <style>
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
+        }
+
+        .responsive {
+            width: 100%;
+            height: 580px;
+        }
+
+        .blink {
+            animation: blinker 12.6s linear infinite;
+            color: #1c87c9;
+            font-size: 30px;
+            font-weight: bold;
+            font-family: sans-serif;
+        }
+
+        @keyframes blinker {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .blink-one {
+            animation: blinker-one 1s linear infinite;
+        }
+
+        @keyframes blinker-one {
+            0% {
+                opacity: 0;
+            }
+        }
+
+        .blink-two {
+            animation: blinker-two 15.4s linear infinite;
+        }
+
+        @keyframes blinker-two {
+            100% {
+                opacity: 0;
+            }
+        }
+
+
+        {#Second SHot#}
+        .mySlides {
+            display: none;
+        }
+
+
+        .mycontainer {
+            width: 100%;
+        }
+
+        .mycontainer img {
+            width: 100%;
+            height: auto;
+        }
+
+        .mycontainer .btn {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            background-color: transparent;
+            color: white;
+            font-size: 16px;
+            padding: 12px 24px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .mycontainer .btn:hover {
+            background-color: transparent;
+        }
+
+
+        .tab {
+            padding-left: 20px;
+            padding-right: 20px;
+            margin-left: 10px;
+            margin-right: 10px;
+            display: flex;
+            justify-content: space-between;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f8f9fa;
+        }
+
+        /* Style the buttons that are used to open the tab content */
+        .tab button {
+            font-weight: bold;
+            background-color: inherit;
+            float: right;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+            background-color: inherit;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+
+        .tabcontentvideos {
+            display: block;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        {# Long comics wrapper #}
+        .longcomicswraper {
+        {#background-color: #0E1318;#} width: 100%;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            margin: 0 auto;
+        }
+
+        .item {
+        {#background-color: #00D9E1;#} padding: 10px 10px;
+            border-radius: 5px;
+        }
+
+        .longcomicswraper {
+            /* add this at the end */
+            display: grid;
+        {#grid-template-columns: repeat(6, auto);#} grid-template-columns: repeat({{ summary.longcomicsnumber }}, auto);
+            grid-gap: 0 20px;
+
+            padding: 3px 0px;
+            padding-right: 0;
+        }
+
+        .empty {
+            width: 10px;
+        }
+
+        {#.longcomicswraper {#}
+        {#    /* Add this at the end */#}
+        {##}
+        {#    -ms-overflow-style: none; /* IE and Edge */#}
+        {#    scrollbar-width: none; /* Firefox */#}
+        {#    border-radius: 10px;#}
+        {
+        #}#}
+        {##}
+        {#.longcomicswraper::-webkit-scrollbar {#}
+        {#    display: none; /* Chrome, Safari and Opera */#}
+        {
+        #}#}
+
+        .longcomicswraper {
+            grid-auto-flow: column;
+            grid-template-columns: auto;
+        }
+
+
+        {# short comics wrapper #}
+        .shortcomicswraper {
+        {#background-color: #0E1318;#} width: 100%;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            margin: 0 auto;
+        }
+
+        .item {
+        {#background-color: #00D9E1;#} padding: 10px 10px;
+            border-radius: 5px;
+        }
+
+        .shortcomicswraper {
+            /* add this at the end */
+            display: grid;
+        {#grid-template-columns: repeat(6, auto);#} grid-template-columns: repeat({{ summary.shortcomicsnumber }}, auto);
+            grid-gap: 0 20px;
+
+            padding: 3px 0px;
+            padding-right: 0;
+        }
+
+        .empty {
+            width: 10px;
+        }
+
+        {#.shortcomicswraper {#}
+        {#    /* Add this at the end */#}
+        {##}
+        {#    -ms-overflow-style: none; /* IE and Edge */#}
+        {#    scrollbar-width: none; /* Firefox */#}
+        {#    border-radius: 10px;#}
+        {
+        #}#}
+        {##}
+        {#.shortcomicswraper::-webkit-scrollbar {#}
+        {#    display: none; /* Chrome, Safari and Opera */#}
+        {
+        #}#}
+
+        .shortcomicswraper {
+            grid-auto-flow: column;
+            grid-template-columns: auto;
+        }
+
+
+        {# single comics wrapper #}
+        .singlecomicswraper {
+        {#background-color: #0E1318;#} width: 100%;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            margin: 0 auto;
+        }
+
+        .item {
+        {#background-color: #00D9E1;#} padding: 10px 10px;
+            border-radius: 5px;
+        }
+
+        .singlecomicswraper {
+            /* add this at the end */
+            display: grid;
+        {#grid-template-columns: repeat(6, auto);#} grid-template-columns: repeat({{ summary.singlecomicsnumber }}, auto);
+            grid-gap: 0 20px;
+
+            padding: 3px 0px;
+            padding-right: 0;
+        }
+
+        .empty {
+            width: 10px;
+        }
+
+        {#.singlecomicswraper {#}
+        {#    /* Add this at the end */#}
+        {##}
+        {#    -ms-overflow-style: none; /* IE and Edge */#}
+        {#    scrollbar-width: none; /* Firefox */#}
+        {#    border-radius: 10px;#}
+        {
+        #}#}
+        {##}
+        {#.singlecomicswraper::-webkit-scrollbar {#}
+        {#    display: none; /* Chrome, Safari and Opera */#}
+        {
+        #}#}
+
+        .singlecomicswraper {
+            grid-auto-flow: column;
+            grid-template-columns: auto;
+        }
+
+
+    </style>
+
+    <script>
+        function openCity(evt, cityName) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</head>
+
+<body>
+
+<!-- ======= Header ======= -->
+<header id="header" class="fixed-top d-flex align-items-center">
+    <div class="container d-flex align-items-center">
+
+        <h1 class="logo me-auto"><img src="{% static 'assets/img/logolast.png' %}"></h1>
+        <!-- Uncomment below if you prefer to use an image logo -->
+        <!-- <a href="index.php" class="logo me-auto"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+
+        <nav id="navbar" class="navbar">
+            <ul>
+                <li><a href="{% url 'homepage' %}" class="active">Home</a></li>
+                <li class="dropdown"><a href="#"><span>About</span> <i class="bi bi-chevron-down"></i></a>
+                    <ul>
+                        <li><a href="{% url 'teampage' %}">Team</a></li>
+                        <li><a href="{% url 'missionpage' %}">Mission</a></li>
+                    </ul>
+                </li>
+                <li><a href={% url "newspage" %}>News</a></li>
+                {#                <li><a href="https://katakata.org/videos/">Videos</a></li>#}
+                {#                <li><a href="#cartoontarget">Magazines</a></li>#}
+                {#                <li><a href="#cartoontarget">Cartoons</a></li>#}
+                <li><a href="{% url 'cartoonspage' %}">Cartoons</a></li>
+
+                <li><a href="{% url 'teampage' %}">Contact</a></li>
+                {#                <li><a href="{% url 'shoppage' %}">Shop</a></li>#}
+                <li class="dropdown"><a
+                        class="getstarted">Download Kata Kata App</a>
+                    <ul style="margin-left: 20px">
+                        <li><a style="color: red" target="_blank"
+                               href="https://play.google.com/store/apps/details?id=techkaita.katakata&hl=en&gl=US">Android
+                            App</a></li>
+                        {#                        <li><a style="color: red" target="_blank"#}
+                        {#                               href="https://play.google.com/store/apps/details?id=techkaita.katakata&hl=en&gl=US">IOS#}
+                        {#                            App</a></li>#}
+                    </ul>
+                </li>
+            </ul>
+            <i class="bi bi-list mobile-nav-toggle"></i>
+        </nav><!-- .navbar -->
+
+    </div>
+</header><!-- End Header -->
+
+
+<br>
+<br>
+
+<div class="w3-content w3-section" style="height: auto; margin-left: 0px; margin-right: 0px">
+
+    {##}
+    {#    <div class="mycontainer">#}
+    {#        <img class="mySlides" src="{% static 'assets/img/seven.jpeg' %}"#}
+    {#             style="width:100%;  height: auto; max-height: 550px">#}
+    {#    </div>#}
+    {##}
+
+
+</div>
+
+<script>
+    var myIndex = 0;
+    carousel();
+
+    function carousel() {
+        var i;
+        var x = document.getElementsByClassName("mySlides");
+        for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";
+        }
+        myIndex++;
+        if (myIndex > x.length) {
+            myIndex = 1
+        }
+        x[myIndex - 1].style.display = "block";
+        setTimeout(carousel, 19000); // Change image every 2 seconds
+    }
+</script>
+
+
+<main id="main">
+
+    <br>
+    <br>
+    <br>
+
+    <h4 style="font-weight: bold" align="center">Unsubscribed!</h4>
+
+    <br>
+    <br>
+    <br>
+
+
+    <h5 align="center" style="color: black">You having been removed from our mailing list. You will no longer receive subscription emails from us.</h5>
+
+    {% if summary.usermessage %}
+        <br>
+        <br>
+        <div align="center" style="border-style: ridge; margin-right: 40px; margin-left: 40px;">
+            <br>
+            <h4 style="font-weight: bold" align="center">Your Message</h4>
+            <p style="font-size: 13px">{{ summary.usermessage }}</p>
+
+        </div>
+    {% endif %}
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+
+</main><!-- End #main -->
+
+<!-- ======= Footer ======= -->
+<footer id="footer">
+    <div class="footer-top">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-info">
+                        <h3>Kata Kata African Cartoons</h3>
+                        <p>
+                            Venloweg 34<br>
+                            1324 DL Almere<br>
+                            The Netherlands
+                            <br>
+                            <br>
+                            Phone:<br>+31 36 5298411<br>+31 619869357<br>+31 684316478
+                        </p>
+                        <div class="social-links mt-3">
+                            <a href="https://twitter.com/Katakatacartoon" class="twitter"><i class="bx bxl-twitter"></i></a>
+                            <a href="https://web.facebook.com/KataKataCartoon?_rdc=1&_rdr" class="facebook"><i
+                                    class="bx bxl-facebook"></i></a>
+                            <a href="https://www.instagram.com/katakatacartoon/?hl=en" class="instagram"><i
+                                    class="bx bxl-instagram"></i></a>
+                            <a href="https://www.linkedin.com/in/ogoubabukoh/" class="linkedin"><i
+                                    class="bx bxl-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-6 footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><i class="bx bx-chevron-right"></i> <a href="{% url 'homepage' %}">Home</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="{% url 'teampage' %}">Our Team</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6 footer-links">
+                    <h4>Our Services</h4>
+                    <ul>
+                        <li><i class="bx bx-chevron-right"></i> <a href="#">Animations</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="#">Cartoons</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="#">Product Management</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="#">Marketing</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="#">Graphic Design</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="copyright">
+            &copy; <strong><span>Kata Kata African Cartoons</span></strong>. All Rights Reserved
+        </div>
+        <div class="credits">
+            Designed by <a href="https://bootstrapmade.com/">@ Cocab Tech Solutions</a>
+        </div>
+    </div>
+</footer><!-- End Footer -->
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+
+<!-- Vendor JS Files -->
+<script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+<script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+<script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'assets/vendor/waypoints/noframework.waypoints.js' %}"></script>
+<script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+
+<!-- Template Main JS File -->
+<script src="{% static 'assets/js/main.js' %}"></script>
+
+</body>
+
+
+heroku apps:rename new_name --app old-app-name
+
+heroku apps:rename cartoonskatakata --app katakatacartoons

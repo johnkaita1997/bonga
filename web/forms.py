@@ -1,0 +1,225 @@
+from django import forms
+from django.contrib.auth import get_user_model
+from django.contrib.auth.backends import ModelBackend
+from django.forms.widgets import Select
+
+from appuser.models import AppUser
+from constants.models import Constant
+from contact.models import Contact
+from mobile.models import Mobile
+from school.models import School, SchoolWebCreate
+from student.models import Student
+from web.models import ImportStudentModel, ImportParentModel
+
+
+class AppUserBackend(ModelBackend):
+    def authenticate(self, request, email=None, password=None, **kwargs):
+        UserModel = get_user_model()
+        try:
+            user = UserModel.objects.get(email=email)
+        except UserModel.DoesNotExist:
+            return None
+        else:
+            if user.check_password(password):
+                return user
+        return None
+
+
+
+# create a ModelForm
+class AppUserForm(forms.ModelForm):
+    # specify the name of model to use
+    class Meta:
+        model = AppUser
+        fields = "__all__"
+
+
+
+
+# create a ModelForm
+class EditParentForm(forms.ModelForm):
+    # specify the name of model to use
+    class Meta:
+        model = Contact
+        fields = (
+            'mobile',
+            'name',
+            'mobiletwo',
+        )
+
+
+
+
+# create a ModelForm
+class EditStudentForm(forms.ModelForm):
+    # specify the name of model to use
+    class Meta:
+        model = Student
+        exclude = (
+            'active',
+            'activefromdate',
+            'phonenumber',
+            'password',
+            'confirmpassword',
+            'tokenbalance',
+            'totalnumberofcalls',
+            'username',
+            'email',
+            'school',
+            'user',
+        )
+
+
+
+
+class ReadOnlySelect(Select):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.attrs["disabled"] = "disabled"
+
+class AddStudentForm(forms.ModelForm):
+    # specify the name of model to use
+    class Meta:
+        model = Student
+        exclude = (
+            'active',
+            'activefromdate',
+            'phonenumber',
+            'password',
+            'confirmpassword',
+            'tokenbalance',
+            'totalnumberofcalls',
+            'username',
+            'email',
+            'contacts',
+            'user',
+        )
+
+        widgets = {
+            'school': ReadOnlySelect,
+            'hidden_school': forms.HiddenInput,
+        }
+
+    # add a hidden field for school
+    hidden_school = forms.CharField(widget=forms.HiddenInput)
+
+    def __init__(self, *args, **kwargs):
+        # pass the initial value of school to the hidden field
+        initial = kwargs.get('initial', {})
+        self.base_fields['hidden_school'].initial = initial.get('school')
+        super().__init__(*args, **kwargs)
+
+
+class AddParentForm(forms.ModelForm):
+    # specify the name of model to use
+    class Meta:
+        model = Contact
+        exclude = (
+            'contactuser',
+        )
+
+
+
+class EditSchoolForm(forms.ModelForm):
+    # specify the name of model to use
+    class Meta:
+        model = School
+        exclude = ()
+
+        widgets = {
+            'mobile': ReadOnlySelect,
+            'hidden_mobile': forms.HiddenInput,
+        }
+
+    # add a hidden field for mobile
+    hidden_mobile = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        # pass the initial value of mobile to the hidden field
+        initial = kwargs.get('initial', {})
+        self.base_fields['hidden_mobile'].initial = initial.get('mobile')
+        super().__init__(*args, **kwargs)
+
+
+
+class AddSchoolForm(forms.ModelForm):
+    # specify the name of model to use
+    class Meta:
+        model = SchoolWebCreate
+        exclude = ()
+
+
+class EditMobileForm(forms.ModelForm):
+    # specify the name of model to use
+    class Meta:
+        model = Mobile
+        fields = ('active',)
+
+
+class EditAgentForm(forms.ModelForm):
+    # specify the name of model to use
+    class Meta:
+        model = AppUser
+        fields = (
+            'school',
+            'fullname',
+            'phone',
+        )
+
+
+class AddAgentForm(forms.ModelForm):
+    # specify the name of model to use
+    class Meta:
+        model = AppUser
+        exclude = (
+            'last_login',
+            'groups',
+            'user_permissions',
+            'date_deleted',
+            'date_joined',
+            'first_name',
+            'last_name',
+            'is_staff',
+            'is_agent',
+            'is_superuser',
+            'is_active',
+            'id',
+            'username',
+            'email',
+            'confirmpassword',
+            'isstudent',
+            'isadmin',
+            'isparent',
+            'isagent',
+        )
+
+
+class EditSettingsForm(forms.ModelForm):
+    # specify the name of model to use
+    class Meta:
+        model = Constant
+        fields = (
+            'activationamount',
+            'minutepershilling',
+            'minutespertokenOrequivalentminutes',)
+
+
+
+class ImportStudentsExcelForm(forms.ModelForm):
+    excel_file = forms.FileField(label='Upload Excel file', required=True)
+    class Meta:
+        model = ImportStudentModel
+        fields = "__all__"
+
+
+
+
+
+class ImportParentExcelForm(forms.ModelForm):
+    excel_file = forms.FileField(label='Upload Excel file', required=True)
+    class Meta:
+        model = ImportParentModel
+        fields = "__all__"
+
+
+

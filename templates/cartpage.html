@@ -1,0 +1,37 @@
+{% extends 'shopbase.html' %}
+{% load static %}
+
+{% block body %}
+    <div class="span9">
+        <br>
+        <h4 align="center">Add or Remove Items From Cart </h4>
+        <ul class="breadcrumb">
+            <li><a href="{% url 'homepage' %}">Home</a> <span class="divider">/</span></li>
+            <li><a href="{% url 'shoppage' %}">Continue Shopping</a> <span class="divider">/</span></li>
+            <li class="active">Cart</li>
+        </ul>
+        <div class="row">
+            <table border="5px" cellpadding="5px" style="width: 100%; margin-left: 30px">
+                <tr>
+                    <th align="center">Item</th>
+                    <th align="center">Quantity</th>
+                    <th align="center">Price USD</th>
+                    <th align="center"></th>
+                </tr>
+                <tr>
+                    <td>Green Jacket</td>
+                    <td align="center">7</td>
+                    <td align="center">5</td>
+                    <td align="center"><a style="color: red">Remove</a></td>
+                </tr>        <tr>
+                    <td>Green Jacket</td>
+                    <td align="center">7</td>
+                    <td align="center">5</td>
+                    <td align="center"><a style="color: red">Remove</a></td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+    </div>
+{% endblock %}

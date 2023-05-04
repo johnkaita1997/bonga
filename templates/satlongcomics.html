@@ -1,0 +1,170 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Videos</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Bootstrap News Template - Free HTML Templates" name="keywords">
+    <meta content="Bootstrap News Template - Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href="{% static 'assets/img/small.png' %}" rel="icon">
+    <link href="{% static 'assets/img/small.png' %}" rel="apple-touch-icon">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600&display=swap" rel="stylesheet">
+
+    <!-- CSS Libraries -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'assets/news/lib/slick/slick.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/news/lib/slick/slick-theme.css' %}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{% static 'assets/news/css/style.css' %}" rel="stylesheet">
+
+    <style>
+        .tab {
+            padding-left: 20px;
+            padding-right: 20px;
+            margin-left: 10px;
+            margin-right: 10px;
+            display: flex;
+            justify-content: space-between;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f8f9fa;
+        }
+
+        /* Style the buttons that are used to open the tab content */
+        .tab button {
+            font-weight: bold;
+            background-color: inherit;
+            float: right;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+            background-color: inherit;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Top Bar Start -->
+<div class="top-bar">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                {#                <div class="tb-contact">#}
+                {#                    <p><i class="fas fa-envelope"></i>info@katakata.org</p>#}
+                {#                    <p><i class="fas fa-phone-alt"></i>+254722107660</p>#}
+                {#                </div>#}
+            </div>
+            <div class="col-md-6">
+                <div class="tb-menu">
+                    <a href="{% url 'homepage' %}">Back Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Top Bar Start -->
+
+
+<br><br>
+
+<!--<h4 style="color: black; font-weight: bold" align="center">{{ summary.name }}</h4>-->
+
+<!-- Category News Start-->
+
+<p align="center" style="color: black; font-weight: bold">KATAKATA MAGAZINES</p>
+
+
+<div class="cat-news">
+    <div class="container">
+
+        <!-- Tab content -->
+        <div id="London" class="main">
+
+            <div class="row tm-row">
+
+                {% for value in summary.longcomics.values %}
+                    <article style="padding: 40px" class="col-12 col-md-6 tm-post">
+                        <div style="" class="card">
+                            <a href="{{ value.url }}">
+                                <div align="center">
+                                    <img height="200" src="{{ value.image }}" alt="Avatar"
+                                         style="width:100%; height: 350px; max-width: 250px; margin-top: 20px">
+                                    <div class="container">
+                                        <br>
+                                        <h6 style="color: red"><b>{{ value.name }}</b></h6>
+                                        {#                            <p>Architect & Engineer</p>#}
+                                        {#                            <p>Architect & Engineer</p>#}
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </article>
+
+                {% endfor %}
+
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<!-- Category News End-->
+
+
+<!-- Footer Menu Start -->
+<div class="footer-menu">
+    <div class="container">
+        <div class="f-menu">
+            {#            <a href="">Terms of use</a>#}
+            {#            <a href="">Privacy policy</a>#}
+            {#            <a href="">Cookies</a>#}
+            {#            <a href="">Accessibility help</a>#}
+            <a href="">Kata Kata</a>
+            <a href="">African Cartoons</a>
+        </div>
+    </div>
+</div>
+<!-- Footer Menu End -->
+
+
+<!-- Back to Top -->
+<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'assets/news/lib/easing/easing.min.js' %}"></script>
+<script src="{% static 'assets/news/lib/slick/slick.min.js' %}"></script>
+
+<!-- Template Javascript -->
+<script src="{% static 'assets/news/js/main.js' %}"></script>
+</body>
+</html>

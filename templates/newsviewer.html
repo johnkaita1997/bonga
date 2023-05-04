@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Kata Kata News</title>
+    <!--
+    https://templatemo.com/tm-520-highway
+
+    -->
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="{% static 'assets/img/small.png' %}" rel="icon">
+    <link href="{% static 'assets/img/small.png' %}" rel="apple-touch-icon">
+
+    <link rel="stylesheet" href="{% static 'assets/one/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/one/css/bootstrap-theme.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/one/css/fontAwesome.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/one/css/light-box.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/one/css/templatemo-style.css' %}">
+
+    <link href="https://fonts.googleapis.com/css?family=Kanit:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+
+    <script src="{% static 'assets/one/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
+</head>
+
+<body>
+
+
+<div class="blog-entries">
+    <div class="container">
+        <div class="col-md-9">
+            <div class="blog-posts">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="single-blog-post">
+                            <img src="{{ summary.image }}" alt="">
+                            <div class="text-content">
+                                <h2>{{ summary.name }}</h2>
+                                <span><a href="#">Admin | </a> Posted On : <a href="#">{{ summary.date }}</a><a href="#"></a></span>
+                                <p>{{ summary.description | safe | urlize }}</p>
+                                {#                                <div class="tags-share">#}
+                                {#                                    <div class="row">#}
+                                {#                                        <div class="col-md-6">#}
+                                {#                                            <ul class="tags">#}
+                                {#                                                <li>Tags:</li>#}
+                                {#                                                <li><a href="#"></a>,</li>#}
+                                {#                                                <li><a href="#"></a>,</li>#}
+                                {#                                                <li><a href="#"></a></li>#}
+                                {#                                            </ul>#}
+                                {#                                        </div>#}
+                                {#                                        <div class="col-md-6">#}
+                                {#                                            <ul class="share">#}
+                                {#                                                <li>Share:</li>#}
+                                {#                                                <li><a href="#"></a>,</li>#}
+                                {#                                                <li><a href="#"></a>,</li>#}
+                                {#                                                <li><a href="#"></a></li>#}
+                                {#                                            </ul>#}
+                                {#                                        </div>#}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="side-bar">
+                <div class="search">
+                    <fieldset>
+                        <input name="search" type="text" class="form-control" id="search" placeholder="Search"
+                               required="">
+                    </fieldset>
+                </div>
+                <div class="categories">
+                    <div class="sidebar-heding">
+                        <h2>Quick Links</h2>
+                    </div>
+                    <ul>
+                        <li><a href="{% url 'homepage' %}">> Home</a></li>
+                        <li><a href="{% url 'cartoonspage' %}">> Cartoons</a></li>
+                        <li><a onclick="history.back()">> Back</a></li>
+                        <li><a href="https://katakata.org/videos">> Videos</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal button -->
+<div class="popup-icon">
+    <button style="background-color: red; color: white; width: 70px; height: 80px" onclick="history.back()">Go Back
+    </button>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+    <!-- Modal Content -->
+    <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h3 class="header-title">Say hello to <em>Highway</em></h3>
+            <div class="close-btn"><img src="img/close_contact.png" alt=""></div>
+        </div>
+        <!-- Modal Body -->
+        <div class="modal-body">
+            <div class="col-md-6 col-md-offset-3">
+                <form id="contact" action="{% url 'homepage' %}" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <fieldset>
+                                <input name="name" type="text" class="form-control" id="name" placeholder="Your name..."
+                                       required="">
+                            </fieldset>
+                        </div>
+                        <div class="col-md-12">
+                            <fieldset>
+                                <input name="email" type="email" class="form-control" id="email"
+                                       placeholder="Your email..." required="">
+                            </fieldset>
+                        </div>
+                        <div class="col-md-12">
+                            <fieldset>
+                                <textarea name="message" rows="6" class="form-control" id="message"
+                                          placeholder="Your message..." required=""></textarea>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-12">
+                            <fieldset>
+                                <button type="submit" id="submit" class="btn">Send Message Now</button>
+                            </fieldset>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Footer Menu Start -->
+<div align="center" class="footer-menu">
+    <div class="container">
+        <div class="f-menu">
+            <a href="">Kata Kata |</a>
+            <a href="">African Cartoons</a>
+        </div>
+    </div>
+</div>
+<!-- Footer Menu End -->
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="{% static 'assets/one/js/vendor/jquery-1.11.2.min.js' %}"><\/script>')</script>
+
+<script src="{% static 'assets/one/js/vendor/bootstrap.min.js' %}"></script>
+
+<script src="{% static 'assets/one/js/plugins.js' %}"></script>
+<script src="{% static 'assets/one/js/main.js' %}"></script>
+
+</body>
+</html>

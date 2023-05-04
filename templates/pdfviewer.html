@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ summary.pdf }}</title>
+    <!-- Favicon -->
+    <link href="{% static 'assets/img/small.png' %}" rel="icon">
+    <link href="{% static 'assets/img/small.png' %}" rel="apple-touch-icon">
+</head>
+<body>
+
+<p>{{ thepdf }}</p>
+
+
+{% if summary.thepdf %}
+
+    <br>
+    <div style="height: 100%" align="center">
+
+        {#                <iframe src="https://docs.google.com/gview?url={{ summary.thepdf }}.pdf&embedded=true"#}
+        {#                        style="width:600px; height:500px;" frameborder="0">#}
+        {#                </iframe>#}
+
+
+        {#                src="{{ summary.thepdf }}#toolbar=0"#}
+        {#        <embed#}
+        {#                src="{{ summary.thepdf }}"#}
+        {#                type="application/pdf"#}
+        {#                frameBorder="0"#}
+        {#                scrolling="auto"#}
+        {#                height="600px"#}
+        {#                width="100%"#}
+        {#        >#}
+
+
+        {#        <iframe#}
+        {#                src="{{ summary.thepdf }}"#}
+        {#                frameBorder="0"#}
+        {#                scrolling="auto"#}
+        {#                height="100%"#}
+        {#                width="100%"#}
+        {#        ></iframe>#}
+
+
+        {##}
+        {#        <object data='{{ summary.thepdf }}#toolbar=1'#}
+        {#                type='application/pdf'#}
+        {#                width='100%'#}
+        {#                height='700px'>#}
+        {##}
+
+
+        {#        <iframe src="{{ summary.thepdf }}"#}
+        {#                style="width:600px; height:500px;" frameborder="0"></iframe>#}
+
+        {#        <a href="{{ summary.thepdf }}" target="_blank">View PDF</a>#}
+
+
+{#        <div style="height: 700px" id="example1"></div>#}
+{#        <script src="/js/pdfobject.js"></script>#}
+{#        <script>PDFObject.embed("{{ summary.thepdf }}", "#example1");</script>#}
+
+
+        <br>
+        <br>
+        <button onclick="history.back()">Go Back</button>
+    </div>
+{% endif %}
+
+</body>
+</html>

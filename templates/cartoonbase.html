@@ -1,0 +1,122 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cartoons</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xtra Blog</title>
+    <link rel="stylesheet" href="{% static 'assets/two/fontawesome/css/all.min.css' %}">
+    <!-- https://fontawesome.com/ -->
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+    <!-- https://fonts.google.com/ -->
+    <link href="{% static 'assets/two/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/two/css/templatemo-xtra-blog.css' %}" rel="stylesheet">
+
+    <link href="{% static 'assets/img/small.png' %}" rel="icon">
+    <link href="{% static 'assets/img/small.png' %}" rel="apple-touch-icon">
+
+    <style>
+        .card {
+            padding: 5px;
+        {#box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);#} transition: 0.3s;
+            width: 102%;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            padding: 2px 16px;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        }
+
+
+    </style>
+
+</head>
+</head>
+<body>
+
+<header class="tm-header" id="tm-header">
+    <div class="tm-header-wrapper">
+        <button class="navbar-toggler" type="button" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="">
+            {#            <img width="280px" src="{% static 'assets/img/kata_logo.png' %}">#}
+            {#            <br><br>#}
+            <h3 class="">Kata Kata cartoons</h3>
+            <br>
+        </div>
+
+        <nav class="tm-nav" id="tm-nav">
+            <ul>
+
+                <li class=""><a href="{% url 'homepage' %}" class="tm-nav-link"><i
+                        class="fas fa-home"></i>Home</a></li>
+
+                <li class="tm-nav-item"><a href="{% url 'longcomicspage' %}" class="tm-nav-link"><i
+                        class="fas fa-users"></i>Long Comics</a></li>
+
+
+                <li class="tm-nav-item"><a href="{% url 'conthumournamespage' %}" class="tm-nav-link"><i
+                        class="fas fa-users"></i>Short comics</a></li>
+
+                <li class=""><a href="{% url 'humourpage' %}" class="tm-nav-link"><i
+                        class="fas fa-home"></i>Single Comics</a></li>
+
+                <li class="tm-nav-item"><a href="{% url 'socialproblemspage' %}" class="tm-nav-link"><i
+                        class="fas fa-users"></i>Social Problems</a></li>
+
+                <li class="tm-nav-item"><a href="{% url 'quotespage' %}" class="tm-nav-link"><i
+                        class="fas fa-users"></i>Quotes</a></li>
+
+                <li class="tm-nav-item"><a href="{% url 'jabspage' %}" class="tm-nav-link">
+                    <i class="fas fa-pen"></i>
+                    Jabs
+                </a></li>
+
+                <li class="tm-nav-item"><a href="{% url 'proverbspage' %}" class="tm-nav-link"><i
+                        class="fas fa-users"></i>Proverbs</a></li>
+
+            </ul>
+        </nav>
+
+
+        <p class="tm-mb-80 pr-5 text-white">
+            Don’t Worry, Just Laugh.
+        </p>
+    </div>
+</header>
+
+<div style="margin-left: 20px" class="container-fluid">
+    <main class="tm-main">
+
+        <a target="_blank" href="https://play.google.com/store/apps/details?id=techkaita.katakata&hl=en&gl=US"><img
+                width="300px"
+                height="80px"
+
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1200px-Google_Play_Store_badge_EN.svg.png"></a>
+        {#        <a target="_blank" style="float: right"#}
+        {#           href="https://play.google.com/store/apps/details?id=techkaita.katakata&hl=en&gl=US"><img width="300px"#}
+        {#                                                                                                    height="80px"#}
+        {#                                                                                                    src="https://i2.wp.com/mofc.unic.ac.cy/wp-content/uploads/revslider/decentralized-2020-home-slider1-12/get-it-on-app-store.png?fit=1024%2C355&ssl=1"></a>#}
+    </main>
+</div>
+{% block cartooncontent %}{% endblock cartooncontent %}
+
+<script src="{% static 'assets/two/js/jquery.min.js' %}"></script>
+<script src="{% static 'assets/two/js/templatemo-script.js' %}"></script>
+</body>
+</html>

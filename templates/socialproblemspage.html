@@ -1,0 +1,89 @@
+{% extends 'cartoonbase.html' %}
+{% load static %}
+
+{% block cartooncontent %}
+    <div class="container-fluid">
+        <main class="tm-main">
+            <br>
+            <p style="font-size: 20px; color: black; margin-left: 20px">SOCIAL PROBLEMS</p>
+
+            <div class="row tm-row">
+
+                {% for value in summary.loadsocialproblems.values %}
+
+                    {#                    <article class="col-12 col-md-6 tm-post">#}
+                    {##}
+                    {#                        <h2 style="color: white; padding: 20px; background-color: black" class="tm-pt-30 tm-color-primaryb tm-post-title">{{ value.name }}</h2>#}
+                    {#                        <br>#}
+                    {##}
+                    {#                        <hr class="tm-hr-primary">#}
+                    {#                        <a href="{% url 'imageviewer' theimage=value.image %}"#}
+                    {#                           class="effect-lily tm-post-link tm-pt-60">#}
+                    {#                            <div class="tm-post-link-inner">#}
+                    {#                                <img src="{{ value.image }}" alt="Image" class="" width="400" height="350">#}
+                    {#                            </div>#}
+                    {#                        </a>#}
+                    {#                        <br>#}
+                    {#                        <p style="font-size: 15px; color: black" class="tm-pt-30">#}
+                    {#                            {{ value.description | safe }}#}
+                    {#                        </p>#}
+                    {#                    </article>#}
+
+                    <article class="col-12 col-md-6 tm-post">
+                        <div style="" class="card">
+
+                            <h2 style="background: black; color: white; padding: 10px; "
+                                class="tm-pt-30 tm-color-primaryb tm-post-title">{{ value.name }}</h2>
+                            <br>
+
+                            <a href="{% url 'imageviewer' theimage=value.image %}">
+                                <img width="600" height="330" src="{{ value.image }}" alt="Avatar" style="width:100%">
+                            </a>
+
+                            <div class="container">
+                                <br>
+                                <h6 style="color: red"><b>{{ value.name }}</b></h6>
+
+                                <p style="font-size: 15px; color: black" class="tm-pt-30">
+                                    {{ value.description | safe | urlize }}
+                                </p>
+                                {#                            <p>Architect & Engineer</p>#}
+                            </div>
+                        </div>
+                    </article>
+
+
+                {% endfor %}
+
+            </div>
+
+
+            {#            <div class="row tm-row tm-mt-100 tm-mb-75">#}
+            {#                <div class="tm-prev-next-wrapper">#}
+            {#                    <a href="#" class="mb-2 tm-btn tm-btn-primary tm-prev-next disabled tm-mr-20">Prev</a>#}
+            {#                    <a href="#" class="mb-2 tm-btn tm-btn-primary tm-prev-next">Next</a>#}
+            {#                </div>#}
+            {#                <div class="tm-paging-wrapper">#}
+            {#                    <span class="d-inline-block mr-3">Page</span>#}
+            {#                    <nav class="tm-paging-nav d-inline-block">#}
+            {#                        <ul>#}
+            {#                            <li class="tm-paging-item active">#}
+            {#                                <a href="#" class="mb-2 tm-btn tm-paging-link">1</a>#}
+            {#                            </li>#}
+            {#                            <li class="tm-paging-item">#}
+            {#                                <a href="#" class="mb-2 tm-btn tm-paging-link">2</a>#}
+            {#                            </li>#}
+            {#                            <li class="tm-paging-item">#}
+            {#                                <a href="#" class="mb-2 tm-btn tm-paging-link">3</a>#}
+            {#                            </li>#}
+            {#                            <li class="tm-paging-item">#}
+            {#                                <a href="#" class="mb-2 tm-btn tm-paging-link">4</a>#}
+            {#                            </li>#}
+            {#                        </ul>#}
+            {#                    </nav>#}
+            {#                </div>#}
+            {#            </div>#}
+        </main>
+    </div>
+
+{% endblock %}

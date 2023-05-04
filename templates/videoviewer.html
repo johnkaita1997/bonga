@@ -1,0 +1,104 @@
+{% extends 'videos.html' %}
+{% load static %}
+
+
+{% block logincheck %}
+
+    {% if summary.loggedin %}
+        <a href="{% url 'logout' %}">
+            <button style="margin-top: 10px; height: 36px; width: 110px; color: white; border-color: transparent; background: #D9232D; margin-right: 30px"
+                    href="#"> Logout
+            </button>
+        </a>
+    {% else %}
+        <a href="{% url 'userlogin' %}">
+            <button style="margin-top: 10px; height: 36px; width: 110px; color: white; border-color: transparent; background: #D9232D; margin-right: 30px"
+                    href="#"> Login
+            </button>
+        </a>
+    {% endif %}
+
+{% endblock %}
+
+{% block videocontent %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                alert("{{ message }}")
+            </script>
+        {% endfor %}
+    {% endif %}
+
+    <div style="margin-left: 30px" class="main__video">
+
+        <div class="main__video-container">
+            <iframe width="100%" height="315" src="//player.vimeo.com/video/{{ summary.default.video }}?portrait=0"
+                    frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe>
+        </div>
+
+        <br><br>
+        <div class="main__description">
+            <b></b>
+            <p style="color: black; font-weight: bold"><b> {{ summary.default.description }} </b></p><br>
+            <p>{{ summary.numberofviews }} Views</p>
+            <p style="float: right; margin-top: 25px; margin-left: 70px; color: black"
+               class="comments__name">{{ value.name }}
+                <a href="#">{{ summary.default.formatted }}</a>
+            </p>
+        </div>
+
+        <div class="main__sub-description">
+            <p><strong> {{ summary.default.size }} COMMENTS</strong></p>
+        </div>
+
+        <form action="{% url 'videoviewer' video=summary.default.name position=summary.default.position %}" method=post>
+            {% csrf_token %}
+            <textarea style=" padding: 2px; height: 40px; margin-right: 0px; float: left; width: 99.5%" type="text"
+                      name="comment" id="comment" placeholder="Add a public comment..." required></textarea>
+            <input style="height: 26px; color: white; border-color: transparent; background: #D9232D; margin-top: 20px; float: right; width:20%"
+                   type="submit" name="submit" id="submit" value="Submit">
+        </form>
+
+    </div>
+
+
+    <section>
+
+        <div style="margin-left: 90px">
+
+            <br>
+            {% for value in summary.default.comments.values %}
+                <div class="comments">
+
+                    <img style=" margin-right: 150px; border-radius: 20%"
+                            {#                         src="{% static 'assets/images/profile_icon.png' %}" alt="profile icon" width="50" height="40">#}
+                         src="{{ value.image }}" alt="profile icon" width="50" height="40">
+                    <p style="margin-left: 70px; color: black" class="comments__name">{{ value.name }} <a
+                            href="#">{% comment %}10 months ago{% endcomment %}</a>
+                    </p>
+                    <p style="margin-left: 70px" class="comments__comment">{{ value.comment }}</p>
+
+                    {% comment %} <div class="likes">
+                        <a href="#">
+                            <img src="{% static 'assets/myimages/like.jpg' %}" alt="like">
+                        </a>
+                        <p class="comments__text">1K</p>
+                        <a href="#">
+                            <img src="{% static 'assets/myimages/dislike.jpg' %}" alt="dislike">
+                        </a>
+                        <a href="#" class="comments__text">REPLY</a>
+                    </div>{% endcomment %}
+
+                </div>
+                <br>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+{% endblock %}
+
+

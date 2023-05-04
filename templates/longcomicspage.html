@@ -1,0 +1,33 @@
+{% extends 'cartoonbase.html' %}
+{% load static %}
+
+{% block cartooncontent %}
+    <div class="container-fluid">
+        <main class="tm-main">
+            <br>
+            <p style="font-size: 20px; margin-left: 20px; color: black">lONG COMICS</p>
+
+            <div class="row tm-row">
+                {% for value in summary.loadlongcomics.values %}
+                    <article class="col-12 col-md-6 tm-post">
+                        <div style="" class="card">
+                            <a href="{{ value.url }}">
+
+                                <h6 style="color: red; padding: 10px"><b>{{ value.name }}</b></h6>
+
+                                <img width="580" height="580" src="{{ value.image }}" alt="Avatar" style="width:100%">
+                                <div class="container">
+                                    <br>
+                                    {#                            <p>Architect & Engineer</p>#}
+                                </div>
+                            </a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+
+
+        </main>
+    </div>
+
+{% endblock %}
