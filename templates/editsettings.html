@@ -1,15 +1,16 @@
-{% extends 'adminmenubar.html' %}
+{% extends 'menubar.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
-{% if messages %}
-    {% for message in messages %}
-        <script>
-            alert("{{ message }}")
-        </script>
-    {% endfor %}
-{% endif %}
 
 {% block body %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                alert("{{ message }}")
+            </script>
+        {% endfor %}
+    {% endif %}
 
     <div class="container-fluid">
 
@@ -145,7 +146,8 @@
                                         KES: {{ token.equivalentshillings }}</div>
                                 </div>
                                 <div class="col-auto">
-                                    <a href="{% url 'deletetoken' tokenid=token.id %}" class="btn btn-danger btn-sm float-right"><i class="fas fa-trash"></i>
+                                    <a href="{% url 'deletetoken' tokenid=token.id %}"
+                                       class="btn btn-danger btn-sm float-right"><i class="fas fa-trash"></i>
                                     </a>
                                 </div>
                             </div>

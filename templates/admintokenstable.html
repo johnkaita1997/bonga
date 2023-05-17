@@ -2,6 +2,13 @@
 {% load static %}
 {% block body %}
 
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                alert("{{ message }}")
+            </script>
+        {% endfor %}
+    {% endif %}
 
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -78,7 +85,7 @@
                                 <td>{{ valued.id }}</td>
                                 <td>{{ valued.school.name }}</td>
                                 <td>{{ valued.mobile }}</td>
-                                <td>{{ valued.tokensconsumed }}</td>
+                                <td>{{ valued.tokensconsumed |floatformat:2 }}</td>
                                 <td>{{ valued.standingtoken|floatformat:2 }}</td>
                                 {% comment %}<td style="border: 1px solid;">{% endcomment %}
                             </tr>

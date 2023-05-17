@@ -10,7 +10,6 @@ urlpatterns = [
     # AGENT
     path('agent/home', webviews.agenthomepage, name='agenthomepageminusid'),
     path('agent/home/<str:schoolid>/', webviews.agenthomepage, name='agenthomepage'),
-
     path('students', webviews.studentshomepage, name='studentshomepage'),
     path('students/add', webviews.addStudent, name='addStudent'),
     path('students/import', webviews.importStudent, name='importStudent'),
@@ -38,7 +37,9 @@ urlpatterns = [
     path('schools/view/<str:schoolid>', webviews.viewschool, name='viewschool'),
 
     path('devices', webviews.admindevicepage, name='admindevicepage'),
+    path('devices/add', webviews.adddevice, name='adddevice'),
     path('devices/edit/<str:mobileid>', webviews.editdevice, name='editdevice'),
+    path('devices/delete/<str:mobileid>', webviews.deleteDevice, name='deleteDevice'),
 
     path('tokens', webviews.admintokenspage, name='admintokenspage'),
 
@@ -52,7 +53,8 @@ urlpatterns = [
     path('agents/edit/<str:agentid>', webviews.editagent, name='editagent'),
     path('agents/delete/<str:agentid>', webviews.deleteagent, name='deleteagent'),
 
-    path('settings', webviews.adminsettingshomepage, name='adminsettingshomepage'),
+    path('settings', webviews.settingshomepage, name='settingshomepage'),
+    path('admin/settings', webviews.adminsettingshomepage, name='adminsettingshomepage'),
 
 ]
 

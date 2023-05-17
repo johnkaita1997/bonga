@@ -126,6 +126,12 @@
                 <span>Transactions</span></a>
         </li>
 
+         <li class="nav-item">
+            <a class="nav-link" href="{% url 'settingshomepage' %}">
+                <i class="fas fa-fw fa-table"></i>
+                <span>Settings</span></a>
+        </li>
+
         {% if summary.istheadmin %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'adminhomepage' %}">

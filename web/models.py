@@ -1,5 +1,6 @@
 from django.db import models
-from django.forms import forms
+
+from mobile.models import Mobile
 
 
 # Create your models here.
@@ -41,3 +42,11 @@ class ImportParentModel(models.Model):
 
     def __str__(self):
         return f"{self.parent_fullname_table_name}"
+
+
+# Create your models here.
+class MobileMinutes(models.Model):
+    mobile = models.ForeignKey(Mobile, on_delete=models.CASCADE, related_name="mobileminutes")
+    minutes  =  models.FloatField(max_length=255, blank=True, null=True,default=None)
+    def __str__(self):
+        return f"{self.minutes}"

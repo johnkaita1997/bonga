@@ -1,8 +1,16 @@
 {% extends 'adminmenubar.html' %}
 {% load static %}
 {% block body %}
-    {% load crispy_forms_tags %}
 
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                alert("{{ message }}")
+            </script>
+        {% endfor %}
+    {% endif %}
+
+    {% load crispy_forms_tags %}
 
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -72,14 +80,15 @@
                                 <td>{{ valued.relativeminutes }}</td>
                                 <td>{{ valued.equivalentshillings }}</td>
                                 <td style="width: 13.33%">
-                                    <a href="{% url 'tokenpurchase' studentid=summary.studentid amount=valued.equivalentshillings %}"
-                                       style="padding: 5px; color:white; background-color: {{ summary.color }}; width: 180px">
-                                        Select Token
-                                    </a>
+                                    <div style="display: flex; justify-content: center;">
+                                        <a href="{% url 'tokenpurchase' studentid=summary.studentid amount=valued.equivalentshillings %}"
+                                           style="padding: 10px; color: white; background-color: {{ summary.color }}; width: 150px; text-align: center; text-decoration: none; border-radius: 5px;">
+                                            Select Token
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}
-
 
                         </tbody>
                     </table>

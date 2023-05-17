@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
+from django.core.validators import MinValueValidator
+from django.db import IntegrityError
 from django.forms.widgets import Select
 
 from appuser.models import AppUser
@@ -9,7 +11,7 @@ from contact.models import Contact
 from mobile.models import Mobile
 from school.models import School, SchoolWebCreate
 from student.models import Student
-from web.models import ImportStudentModel, ImportParentModel
+from web.models import ImportStudentModel, ImportParentModel, MobileMinutes
 
 
 class AppUserBackend(ModelBackend):
@@ -58,6 +60,7 @@ class EditStudentForm(forms.ModelForm):
         exclude = (
             'active',
             'activefromdate',
+            'registrationnumber',
             'phonenumber',
             'password',
             'confirmpassword',
@@ -68,7 +71,6 @@ class EditStudentForm(forms.ModelForm):
             'school',
             'user',
         )
-
 
 
 
@@ -155,7 +157,6 @@ class EditMobileForm(forms.ModelForm):
         model = Mobile
         fields = ('active',)
 
-
 class EditAgentForm(forms.ModelForm):
     # specify the name of model to use
     class Meta:
@@ -165,6 +166,11 @@ class EditAgentForm(forms.ModelForm):
             'fullname',
             'phone',
         )
+    def __init__(self, *args, **kwargs):
+        super(EditAgentForm, self).__init__(*args, **kwargs)
+        self.fields['school'].required = True
+        self.fields['fullname'].required = True
+        self.fields['phone'].required = True
 
 
 class AddAgentForm(forms.ModelForm):
@@ -186,6 +192,7 @@ class AddAgentForm(forms.ModelForm):
             'id',
             'username',
             'email',
+            'password',
             'confirmpassword',
             'isstudent',
             'isadmin',
@@ -202,7 +209,33 @@ class EditSettingsForm(forms.ModelForm):
             'activationamount',
             'minutepershilling',
             'minutespertokenOrequivalentminutes',)
+    def __init__(self, *args, **kwargs):
+        super(EditSettingsForm, self).__init__(*args, **kwargs)
+        self.fields['activationamount'].required = True
+        self.fields['minutepershilling'].required = True
+        self.fields['minutespertokenOrequivalentminutes'].required = True
 
+        self.fields['activationamount'].validators.append(MinValueValidator(0))
+        self.fields['minutepershilling'].validators.append(MinValueValidator(0))
+        self.fields['minutespertokenOrequivalentminutes'].validators.append(MinValueValidator(0))
+
+    def clean_activationamount(self):
+        activationamount = self.cleaned_data.get('activationamount')
+        if activationamount <= 0:
+            raise forms.ValidationError("Activation amount cannot be less than zero.")
+        return activationamount
+
+    def clean_minutepershilling(self):
+        minutepershilling = self.cleaned_data.get('minutepershilling')
+        if minutepershilling <= 0:
+            raise forms.ValidationError("Minute per shilling must be greater than zero.")
+        return minutepershilling
+
+    def clean_minutespertokenOrequivalentminutes(self):
+        minutespertokenOrequivalentminutes = self.cleaned_data.get('minutespertokenOrequivalentminutes')
+        if minutespertokenOrequivalentminutes <= 0:
+            raise forms.ValidationError("Minutes per token or equivalent minutes must be greater than zero.")
+        return minutespertokenOrequivalentminutes
 
 
 class ImportStudentsExcelForm(forms.ModelForm):
@@ -213,13 +246,23 @@ class ImportStudentsExcelForm(forms.ModelForm):
 
 
 
-
-
 class ImportParentExcelForm(forms.ModelForm):
     excel_file = forms.FileField(label='Upload Excel file', required=True)
     class Meta:
         model = ImportParentModel
         fields = "__all__"
+
+
+class MinutesForm(forms.ModelForm):
+    class Meta:
+        model = MobileMinutes
+        fields = "__all__"
+
+
+class DevicesForm(forms.ModelForm):
+    class Meta:
+        model = Mobile
+        fields = ["active", "mobile"]
 
 
 

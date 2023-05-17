@@ -24,4 +24,7 @@ class Call(DatingModel, models.Model):
     def __str__(self):
         return str(self.id) + f" -   Call Duration :  {self.duration}"
 
+    class Meta:
+        ordering = ["-date_created"]
+
 

@@ -17,6 +17,7 @@ class DatingModel(models.Model):
     class Meta:
         abstract = True
 
+
 # Create your models here.
 class Contact(DatingModel, models.Model):
     relationship = models.CharField(max_length=255, choices=RELATIONSHIP, default="PARENT")
@@ -28,5 +29,8 @@ class Contact(DatingModel, models.Model):
 
     def __str__(self):
         return f"{self.id} - {self.name}"
+
+    class Meta:
+        ordering = ["-date_created"]
 
 

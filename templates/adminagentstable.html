@@ -1,7 +1,13 @@
 {% extends 'adminmenubar.html' %}
 {% load static %}
 {% block body %}
-
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                alert("{{ message }}")
+            </script>
+        {% endfor %}
+    {% endif %}
 
     <!-- Begin Page Content -->
     <div class="container-fluid">

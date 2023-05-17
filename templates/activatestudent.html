@@ -1,13 +1,14 @@
 {% extends 'menubar.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
-{% if message %}
-    <script>
-        alert('{{message}}')
-    </script>
-{% endif %}
 
 {% block body %}
+
+    {% if message %}
+        <script>
+            alert('{{message}}')
+        </script>
+    {% endif %}
 
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -36,11 +37,12 @@
                 {% csrf_token %}
                 {{ summary.form | crispy }}
                 <label style="color: #FFFFFF">Mobile :</label>
-                <input style="padding: 2px" type="number" name="mobile" id="mobile" value="{{ summary.mobile }}">
+                <input style="padding: 2px" type="number"  name="mobile" id="mobile" value="{{ summary.mobile }}" placeholder="254...">
                 <br>
                 <br>
                 <br>
-                <button style="background-color: {{ summary.color }}; width: 320px" type="submit" id="submit" value="submit">Activate Account
+                <button style="background-color: {{ summary.color }}; width: 320px" type="submit" id="submit"
+                        value="submit">Activate Account
                 </button>
             </form>
 

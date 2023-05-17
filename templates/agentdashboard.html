@@ -1,12 +1,13 @@
 {% extends 'menubar.html' %}
 {% load static %}
-{% if message %}
-    <script>
-        alert('{{message}}')
-    </script>
-{% endif %}
-
 {% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                alert("{{ message }}")
+            </script>
+        {% endfor %}
+    {% endif %}
 
     <br>
     <!-- Begin Page Content -->

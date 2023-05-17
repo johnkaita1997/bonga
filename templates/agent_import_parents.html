@@ -1,15 +1,15 @@
 {% extends 'menubar.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
-{% if messages %}
-    {% for message in messages %}
-        <script>
-            alert("{{ message }}")
-        </script>
-    {% endfor %}
-{% endif %}
 
 {% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                alert("{{ message }}")
+            </script>
+        {% endfor %}
+    {% endif %}
 
     <div class="container-fluid">
 

@@ -36,10 +36,16 @@ class StudentListView(generics.ListAPIView):
     def get_queryset(self):
         queryset = Student.objects.all()
         contactuserid = self.request.query_params.get('contactuserid')
+        user = self.request.query_params.get('user')
         if contactuserid:
             queryset = queryset.filter(contacts__contactuser__id=contactuserid)
             queryset = queryset.distinct()
+        elif user:
+            queryset = queryset.filter(user__id=user)
+            queryset = queryset.distinct()
         return queryset
+
+
 
 
 class StudentListDetailView(generics.RetrieveUpdateDestroyAPIView):

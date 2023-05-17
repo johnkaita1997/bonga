@@ -47,7 +47,7 @@ class MpesaGateway:
         self.passkey ="9cd4dd3777a83ffc18c70766a77e1f2077dbaea17188f98235158ed533f3331d"
         self.consumer_secret = "DurpnNk6Z21uDjaW"
         self.password = self.generate_password()
-        self.c2b_callback = "https://cf35-41-80-114-154.ngrok-free.app/api/v1/payments/callback"
+        self.c2b_callback = "http://3.91.226.73/api/v1/payments/callback"
         self.access_token_url = 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
         self.checkout_url = 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
 
@@ -191,10 +191,10 @@ class MpesaGateway:
 
                 # ADD TOKENS AND MINUTES TO STUDENT
                 userpaid = amount
-                minutespershilling = Constant.objects.get(id=0).minutepershilling
-                minutespertokenOrequivalentminutes = Constant.objects.get(id=0).minutespertokenOrequivalentminutes
-                minutespertokenOrequivalentminutes = Constant.objects.get(id=0).minutespertokenOrequivalentminutes
-                shillingspertokenOrequivalentshillings = Constant.objects.get(id=0).shillingspertokenOrequivalentshillings
+                minutespershilling = Constant.objects.get(school=student.school).minutepershilling
+                minutespertokenOrequivalentminutes = Constant.objects.get(school=student.school).minutespertokenOrequivalentminutes
+                minutespertokenOrequivalentminutes = Constant.objects.get(school=student.school).minutespertokenOrequivalentminutes
+                shillingspertokenOrequivalentshillings = Constant.objects.get(school=student.school).shillingspertokenOrequivalentshillings
                 # SUBTRACT TOKENS AND MINUTES FROM USER
 
                 student.tokenbalance = student.tokenbalance + (userpaid / shillingspertokenOrequivalentshillings)

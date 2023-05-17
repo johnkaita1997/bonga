@@ -2,11 +2,28 @@
 {% load static %}
 {% block body %}
 
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                alert("{{ message }}")
+            </script>
+        {% endfor %}
+    {% endif %}
 
     <!-- Begin Page Content -->
     <div class="container-fluid">
 
         <br>
+        <!-- Page Heading -->
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0 text-gray-800"></h1>
+            <div>
+                <a href="{% url 'adddevice' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                        class=""></i>Add A Device</a>
+            </div>
+        </div>
+        <br>
+
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -57,14 +74,23 @@
                                 </td>
 
 
-                                <td style="width:3%">
-                                    <div align="center" class="col-md-4">
-                                        <a style="width: 120px; margin-right: 2px"
-                                           href="{% url 'editdevice' mobileid=valued.id %}"
-                                           class="btn btn-primary btn-sm">
-                                            <i class=""></i> Edit
-                                        </a>
+                                <td>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-4 text-center">
+                                            <a href="{% url 'editdevice' mobileid=valued.id %}"
+                                               class="btn btn-primary btn-sm">
+                                                <i class=""></i> Edit
+                                            </a>
+                                        </div>
+                                        <div class="col-md-1 text-center my-2 my-md-0">|</div>
+                                        <div class="col-md-4 text-center">
+                                            <a href="{% url 'deleteDevice' mobileid=valued.id %}"
+                                               class="btn btn-danger btn-sm">
+                                                <i class=""></i> Delete
+                                            </a>
+                                        </div>
                                     </div>
+
                                 </td>
 
                             </tr>

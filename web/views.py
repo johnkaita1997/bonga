@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import make_password
+from django.db import transaction
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -25,7 +26,8 @@ from student.models import Student
 from tespython import *
 from tokens.models import Token
 from web.forms import EditStudentForm, AddStudentForm, EditParentForm, AddParentForm, AddSchoolForm, EditSchoolForm, \
-    EditMobileForm, EditAgentForm, AddAgentForm, EditSettingsForm, ImportStudentsExcelForm, ImportParentExcelForm
+    EditMobileForm, EditAgentForm, AddAgentForm, EditSettingsForm, ImportStudentsExcelForm, ImportParentExcelForm, \
+    MinutesForm, DevicesForm
 
 
 def getDetails(user):
@@ -45,22 +47,34 @@ def getDetails(user):
             summarydictionary['color'] = "#F15A24"
 
     if 'globalschoolid' in globals() and globalschoolid != None and globalschoolid != "":
-        school = School.objects.get(id=globalschoolid)
+        try:
+            school = School.objects.get(id=globalschoolid)
+        except:
+            pass
         print("Here 2323")
     else:
         school = app_user.school
-        print("There")
+        print(f"There {school}")
 
     try:
         schoolname = school.name
-        schoolmobile = school.mobile.mobile
-        unusedtokens = school.mobile.standingtoken
-        minutespertoken = Constant.objects.get(id=0).minutespertokenOrequivalentminutes
-        print(f"Minutespertoken is ${min}")
-        relativetalketime = unusedtokens * minutespertoken
+        schoolmobile = None
+        unusedtokens = 0
+        tokensconsumed = 0
+        try:
+            schoolmobile = school.mobile.mobile
+            unusedtokens = school.mobile.standingtoken
+            tokensconsumed = school.mobile.tokensconsumed
+        except:
+            pass
+
+        print(f"Found school {school}")
+
+
         registeredStudents = Student.objects.filter(school=school)
         numberofRegisteredStudents = len(registeredStudents)
         parents = Contact.objects.filter(contactuser__school=school)
+
         numberofparents = len(parents)
 
         summarydictionary['fullname'] = fullname
@@ -69,10 +83,8 @@ def getDetails(user):
         summarydictionary['schoolname'] = schoolname
         summarydictionary['schoolmobile'] = schoolmobile
         summarydictionary['unusedtokens'] = round(unusedtokens, 2)
-        summarydictionary['usedtokens'] = round(school.mobile.tokensconsumed, 2)
-        summarydictionary['usedtokensmins'] = round((school.mobile.tokensconsumed) * minutespertoken, 2)
-        summarydictionary['minutespertoken'] = minutespertoken
-        summarydictionary['relativetalketime'] = round(relativetalketime, 2)
+        summarydictionary['usedtokens'] = round(tokensconsumed, 2)
+
         summarydictionary['registeredStudents'] = registeredStudents
         summarydictionary['numberofRegisteredStudents'] = numberofRegisteredStudents
         summarydictionary['parents'] = parents
@@ -89,8 +101,15 @@ def getDetails(user):
         totalschoolrevenue = schooltransactions.aggregate(Sum('amount'))['amount__sum']
         summarydictionary['totalschoolrevenue'] = totalschoolrevenue
 
+        minutespertoken = Constant.objects.get(school=school).minutespertokenOrequivalentminutes
+        print(f"Minutespertoken is ${min}")
+        relativetalketime = unusedtokens * minutespertoken
+        summarydictionary['usedtokensmins'] = round((tokensconsumed) * minutespertoken, 2)
+        summarydictionary['minutespertoken'] = minutespertoken
+        summarydictionary['relativetalketime'] = round(relativetalketime, 2)
 
-    except:
+    except Exception as exception:
+        print(f"This is the error {exception}")
         pass
 
     return summarydictionary
@@ -154,51 +173,60 @@ def addStudent(request):
     if request.method == 'POST':
         form = AddStudentForm(data=request.POST)
         if form.is_valid():
-            fullname = form.cleaned_data.get('fullname').strip()
-            kcpeindexnumber = form.cleaned_data.get('kcpeindexnumber').strip()
-            registrationnumber = form.cleaned_data.get('registrationnumber').strip()
-            schoolid = int(form.cleaned_data.get('hidden_school').split('-')[0].strip()).strip()
-            school = School.objects.get(id=schoolid)
+            with transaction.atomic():
+                fullname = form.cleaned_data.get('fullname').strip()
+                kcpeindexnumber = form.cleaned_data.get('kcpeindexnumber').strip()
+                registrationnumber = form.cleaned_data.get('registrationnumber').strip()
+                schoolid = int(form.cleaned_data.get('hidden_school').split('-')[0].strip())
+                school = School.objects.get(id=schoolid)
 
-            email = f"{registrationnumber}@gmail.com"
-            username = f"{registrationnumber}@gmail.com"
-            password = f"{registrationnumber}@gmail.com"
-            confirmpassword = f"{registrationnumber}@gmail.com"
+                email = f"{registrationnumber}@gmail.com"
+                username = f"{registrationnumber}@gmail.com"
+                password = registrationnumber
+                confirmpassword = registrationnumber
 
-            # Create a new AppUser instance
-            user = AppUser(
-                email=email,
-                username=username,
-                password=make_password(password),
-                confirmpassword=make_password(confirmpassword),
-                fullname=fullname,
-                isstudent=True,
-                isadmin=False,
-                isparent=False,
-                isagent=False,
-                school=school,
-            )
+                # Create a new AppUser instance
+                user = AppUser(
+                    email=email,
+                    username=username,
+                    password=make_password(password),
+                    confirmpassword=make_password(confirmpassword),
+                    fullname=fullname,
+                    isstudent=True,
+                    isadmin=False,
+                    isparent=False,
+                    isagent=False,
+                    school=school,
+                )
 
-            # Save the new AppUser instance
-            user.save()
-            newUser = user
+                # Save the new AppUser instance
+                try:
+                    user.save()
+                    newUser = user
+                except Exception as exception:
+                    messages.error(request, 'An error occurred while creating student: ' + str(exception))
+                    return redirect('addStudent')
 
-            # Create a new Student instance and link it to the new AppUser instance
-            student = Student(
-                fullname=fullname,
-                kcpeindexnumber=kcpeindexnumber,
-                registrationnumber=registrationnumber,
-                school=school,
-                user=newUser,
-                password=password,
-                confirmpassword=confirmpassword,
-                username=username,
-                email=email
-            )
+                # Create a new Student instance and link it to the new AppUser instance
+                student = Student(
+                    fullname=fullname,
+                    kcpeindexnumber=kcpeindexnumber,
+                    registrationnumber=registrationnumber,
+                    school=school,
+                    user=newUser,
+                    password=password,
+                    confirmpassword=confirmpassword,
+                    username=username,
+                    email=email
+                )
 
-            # Save the new Student instance
-            student.save()
-            # Add the new Student instance to any existing Contacts
+                # Save the new Student instance
+                try:
+                    student.save()
+                except Exception as exception:
+                    messages.error(request, 'An error occurred while creating student: ' + str(exception))
+                    return redirect('addStudent')
+                # Add the new Student instance to any existing Contacts
         return redirect('studentshomepage')
 
     else:
@@ -254,7 +282,10 @@ def editparent(request, parentid):
             parent.name = form.cleaned_data.get('name').strip()
             parent.mobiletwo = transform_phone_number(form.cleaned_data.get('mobiletwo')).strip()
             parent.mobile = transform_phone_number(form.cleaned_data.get('mobile')).strip()
-            parent.save()  # save the updated parent object
+            try:
+                parent.save()  # save the updated parent object
+            except Exception as exception:
+                return redirect('editparent')
             return redirect('parentshomepage')
         else:
             messages.error(request, 'Invalid entry')
@@ -297,40 +328,51 @@ def addparent(request):
     if request.method == 'POST':
         form = AddParentForm(data=request.POST)
         if form.is_valid():
-            name = form.cleaned_data.get('name').strip()
-            mobile = transform_phone_number(form.cleaned_data.get('mobile')).strip()
-            mobiletwo = transform_phone_number(form.cleaned_data.get('mobiletwo')).strip()
-            email = form.cleaned_data.get('email').strip()
+            with transaction.atomic():
+                name = form.cleaned_data.get('name').strip()
+                mobile = transform_phone_number(form.cleaned_data.get('mobile')).strip()
+                mobiletwo = transform_phone_number(form.cleaned_data.get('mobiletwo')).strip()
+                email = form.cleaned_data.get('email').strip()
 
-            email = email
+                email = email
 
-            # Create a new AppUser instance
-            user = AppUser(
-                email=email,
-                username=email,
-                password=make_password(email),
-                confirmpassword=make_password(email),
-                fullname=name,
-                isstudent=True,
-                isadmin=False,
-                isparent=True,
-                isagent=False,
-                school=summarydictionary['school']
-            )
+                # Create a new AppUser instance
+                user = AppUser(
+                    email=f"{mobile}@gmail.com",
+                    username=email,
+                    password=make_password(mobile),
+                    confirmpassword=make_password(mobile),
+                    fullname=name,
+                    isstudent=True,
+                    isadmin=False,
+                    isparent=True,
+                    isagent=False,
+                    school=summarydictionary['school']
+                )
 
-            user.save()
-            newUser = user
+                try:
+                    user.save()
+                    newUser = user
+                except Exception as exception:
+                    messages.error(request, 'An error occurred while saving parent: ' + str(exception))
+                    return redirect('addparent')
 
-            contact = Contact(
-                name=name,
-                mobile=mobile,
-                mobiletwo=mobiletwo,
-                email=email,
-                contactuser=newUser
-            )
+                contact = Contact(
+                    name=name,
+                    mobile=mobile,
+                    mobiletwo=mobiletwo,
+                    email=email,
+                    contactuser=newUser
+                )
 
-            # Save the new Student instance
-            contact.save()
+                # Save the new Student instance
+                try:
+                    contact.save()
+                    messages.error(request, "Parent added successfully!")
+                    return redirect('parentshomepage')
+                except Exception as exception:
+                    return redirect('addparent')
+
             # Add the new Student instance to any existing Contacts
         return redirect('parentshomepage')
 
@@ -407,10 +449,16 @@ def editStudent(request, studentid):
     if request.method == 'POST':
         form = EditStudentForm(data=request.POST)
         if form.is_valid():
-            student.kcpeindexnumber = form.cleaned_data.get('kcpeindexnumber').strip()
-            student.registrationnumber = form.cleaned_data.get('registrationnumber').strip()
-            student.contacts.set(form.cleaned_data.get('contacts')).strip()
-            student.save()  # save the updated student object
+            try:
+                student.kcpeindexnumber = form.cleaned_data.get('kcpeindexnumber').strip()
+            except:
+                messages.error(request, "kcpeindexnumber is required")
+                return redirect('editstudent', studentid=studentid)
+            student.contacts.set(form.cleaned_data.get('contacts'))
+            try:
+                student.save()  # save the updated student object
+            except Exception as exception:
+                return redirect('editstudent', studentid=studentid)
             return redirect('studentshomepage')
         else:
             messages.error(request, 'Invalid entry')
@@ -446,11 +494,12 @@ def activateStudent(request, studentid):
     else:
         return redirect('loginpage')
 
+    school = summarydictionary['school']
     student = Student.objects.get(id=studentid)
     user = request.user
     app_user = AppUser.objects.get(id=user.id)
     app_user_mobile = app_user.phone
-    activationFee = Constant.objects.get(id=0).activationamount
+    activationFee = Constant.objects.get(school = school).activationamount
     gateway = mpesa.MpesaGateway()
 
     summarydictionary['activationfee'] = activationFee
@@ -513,51 +562,72 @@ def addStudent(request):
     if request.method == 'POST':
         form = AddStudentForm(data=request.POST)
         if form.is_valid():
-            fullname = form.cleaned_data.get('fullname').strip()
-            kcpeindexnumber = form.cleaned_data.get('kcpeindexnumber').strip()
-            registrationnumber = form.cleaned_data.get('registrationnumber').strip()
-            schoolid = int(form.cleaned_data.get('hidden_school').split('-')[0].strip()).strip()
-            school = School.objects.get(id=schoolid)
+            with transaction.atomic():
+                fullname = form.cleaned_data.get('fullname').strip()
+                try:
+                    kcpeindexnumber = form.cleaned_data.get('kcpeindexnumber').strip()
+                except:
+                    messages.error(request, "KCPE Index Number is required")
+                    return redirect('addStudent')
+                try:
+                    registrationnumber = form.cleaned_data.get('registrationnumber').strip()
+                except:
+                    messages.error(request, "Registration Number is required")
+                    return redirect('addStudent')
+                try:
+                    schoolid = int(form.cleaned_data.get('hidden_school').split('-')[0].strip())
+                except:
+                    messages.error(request, "School is required")
+                    return redirect('addStudent')
 
-            email = f"{registrationnumber}@gmail.com"
-            username = f"{registrationnumber}@gmail.com"
-            password = f"{registrationnumber}@gmail.com"
-            confirmpassword = f"{registrationnumber}@gmail.com"
+                school = School.objects.get(id=schoolid)
+                email = f"{registrationnumber}@gmail.com"
+                username = f"{registrationnumber}@gmail.com"
+                password = registrationnumber
+                confirmpassword = registrationnumber
 
-            # Create a new AppUser instance
-            user = AppUser(
-                email=email,
-                username=username,
-                password=make_password(password),
-                confirmpassword=make_password(confirmpassword),
-                fullname=fullname,
-                isstudent=True,
-                isadmin=False,
-                isparent=False,
-                isagent=False,
-                school=school,
-            )
+                # Create a new AppUser instance
+                user = AppUser(
+                    email=email,
+                    username=username,
+                    password=make_password(password),
+                    confirmpassword=make_password(confirmpassword),
+                    fullname=fullname,
+                    isstudent=True,
+                    isadmin=False,
+                    isparent=False,
+                    isagent=False,
+                    school=school,
+                )
 
-            # Save the new AppUser instance
-            user.save()
-            newUser = user
+                # Save the new AppUser instance
+                try:
+                    user.save()
+                    newUser = user
+                except Exception as exception:
+                    messages.error(request, 'An error occurred while creating object: ' + str(exception))
+                    return redirect('addStudent')
 
-            # Create a new Student instance and link it to the new AppUser instance
-            student = Student(
-                fullname=fullname,
-                kcpeindexnumber=kcpeindexnumber,
-                registrationnumber=registrationnumber,
-                school=school,
-                user=newUser,
-                password=password,
-                confirmpassword=confirmpassword,
-                username=username,
-                email=email
-            )
+                # Create a new Student instance and link it to the new AppUser instance
+                student = Student(
+                    fullname=fullname,
+                    kcpeindexnumber=kcpeindexnumber,
+                    registrationnumber=registrationnumber,
+                    school=school,
+                    user=newUser,
+                    password=password,
+                    confirmpassword=confirmpassword,
+                    username=username,
+                    email=email
+                )
 
-            # Save the new Student instance
-            student.save()
-            # Add the new Student instance to any existing Contacts
+                # Save the new Student instance
+                try:
+                    student.save()
+                except Exception as exception:
+                    messages.error(request, 'An error occurred while creating Student: ' + str(exception))
+                    return redirect('addStudent')
+                # Add the new Student instance to any existing Contacts
         return redirect('studentshomepage')
 
     else:
@@ -589,9 +659,12 @@ def editparent(request, parentid):
         form = EditParentForm(data=request.POST)
         if form.is_valid():
             parent.name = form.cleaned_data.get('name').strip()
-            parent.mobiletwo = transform_phone_number(form.cleaned_data.get('mobiletwo')).strip()
+            parent.mobiletwo = transform_phone_number(form.cleaned_data.get('mobiletwo'))
             parent.mobile = transform_phone_number(form.cleaned_data.get('mobile')).strip()
-            parent.save()  # save the updated parent object
+            try:
+                parent.save()  # save the updated parent object
+            except Exception as exception:
+                return redirect('editparent')
             return redirect('parentshomepage')
         else:
             messages.error(request, 'Invalid entry')
@@ -634,41 +707,49 @@ def addparent(request):
     if request.method == 'POST':
         form = AddParentForm(data=request.POST)
         if form.is_valid():
-            name = form.cleaned_data.get('name').strip()
-            mobile = transform_phone_number(form.cleaned_data.get('mobile')).strip()
-            mobiletwo = transform_phone_number(form.cleaned_data.get('mobiletwo')).strip()
-            email = form.cleaned_data.get('email').strip()
+            with transaction.atomic():
+                name = form.cleaned_data.get('name').strip()
+                mobile = transform_phone_number(form.cleaned_data.get('mobile')).strip()
+                mobiletwo = transform_phone_number(form.cleaned_data.get('mobiletwo'))
+                email = form.cleaned_data.get('email').strip()
 
-            email = email
+                email = email
 
-            # Create a new AppUser instance
-            user = AppUser(
-                email=email,
-                username=email,
-                password=make_password(email),
-                confirmpassword=make_password(email),
-                fullname=name,
-                isstudent=True,
-                isadmin=False,
-                isparent=True,
-                isagent=False,
-                school=summarydictionary['school']
-            )
+                # Create a new AppUser instance
+                user = AppUser(
+                    email=email,
+                    username=email,
+                    password=make_password(email),
+                    confirmpassword=make_password(email),
+                    fullname=name,
+                    isstudent=True,
+                    isadmin=False,
+                    isparent=True,
+                    isagent=False,
+                    school=summarydictionary['school']
+                )
 
-            user.save()
-            newUser = user
+                try:
+                    user.save()
+                    newUser = user
+                except Exception as exception:
+                    messages.error(request, exception)
+                    return redirect('addparent')
 
-            contact = Contact(
-                name=name,
-                mobile=mobile,
-                mobiletwo=mobiletwo,
-                email=email,
-                contactuser=newUser
-            )
+                contact = Contact(
+                    name=name,
+                    mobile=mobile,
+                    mobiletwo=mobiletwo,
+                    email=email,
+                    contactuser=newUser
+                )
 
-            # Save the new Student instance
-            contact.save()
-            # Add the new Student instance to any existing Contacts
+                # Save the new Student instance
+                try:
+                    contact.save()
+                except Exception as exception:
+                    return redirect('addparent')
+                # Add the new Student instance to any existing Contacts
         return redirect('parentshomepage')
 
     else:
@@ -688,10 +769,12 @@ def adminhomepage(request):
 
     summarydictionary = getDetails(user)
 
-    mobiles = Mobile.objects.aggregate(total_standingtoken=Sum('standingtoken'))
-    totalstandingtokens = mobiles['total_standingtoken']
-    minutespertoken = Constant.objects.get(id=0).minutespertokenOrequivalentminutes
-    relativetalktime = totalstandingtokens * minutespertoken
+    mobilestokens = Mobile.objects.aggregate(total_standingtoken=Sum('standingtoken'))
+    mobileminutes = Mobile.objects.aggregate(total_standingtoken=Sum('standingminutes'))
+
+    totalstandingtokens = mobilestokens['total_standingtoken']
+    totalstandingminutes = mobileminutes['total_standingminutes']
+    relativetalktime = totalstandingminutes
 
     # Get the current month's start and end dates
     current_month_start = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -735,41 +818,8 @@ def adminschoolpage(request):
 
     summarydictionary = getDetails(user)
 
-    mobiles = Mobile.objects.aggregate(total_standingtoken=Sum('standingtoken'))
-    totalstandingtokens = mobiles['total_standingtoken']
-    minutespertoken = Constant.objects.get(id=0).minutespertokenOrequivalentminutes
-    relativetalktime = totalstandingtokens * minutespertoken
-
-    # Get the current month's start and end dates
-    current_month_start = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    next_month_start = (current_month_start + timezone.timedelta(days=31)).replace(day=1)
-    thismonthtransactionslist = Transaction.objects.filter(status="COMPLETE", date_created__gte=current_month_start,
-                                                           date_created__lt=next_month_start)
-    thismonthtotalincome = thismonthtransactionslist.aggregate(Sum('amount'))['amount__sum']
-
-    # Print the count of transactions
-    # Get the start and end dates of the last month
-    now = timezone.now()
-    last_month_end = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    last_month_start = (last_month_end - timezone.timedelta(days=1)).replace(day=1)
-    lastmonthtransactionslist = Transaction.objects.filter(status="COMPLETE", date_created__gte=last_month_start,
-                                                           date_created__lt=last_month_end)
-    lastmonthtotalincome = lastmonthtransactionslist.aggregate(Sum('amount'))['amount__sum']
-
-    numberofusers = AppUser.objects.count()
-    activedevices = Mobile.objects.filter(active=True).count()
-
     schoollist = School.objects.all()
     serializer = SchoolWebSerializer(schoollist, many=True)
-
-    summarydictionary['totalstandingtokens'] = round(totalstandingtokens, 2)
-    summarydictionary['totalrelativetalktime'] = round(relativetalktime, 2)
-    summarydictionary['thismonthtransactionslist'] = thismonthtransactionslist
-    summarydictionary['thismonthtotalincome'] = thismonthtotalincome
-    summarydictionary['lastmonthtransactionslist'] = lastmonthtransactionslist
-    summarydictionary['lastmonthtotalincome'] = lastmonthtotalincome
-    summarydictionary['numberofusers'] = numberofusers
-    summarydictionary['activedevices'] = activedevices
     summarydictionary['schoollist'] = serializer.data
 
     response = render(request, "adminschooltable.html", {"summary": summarydictionary})
@@ -779,7 +829,6 @@ def adminschoolpage(request):
 @never_cache
 def editschool(request, schoolid):
     school = School.objects.get(id=schoolid)
-    summarydictionary = {}
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -790,8 +839,15 @@ def editschool(request, schoolid):
             school.name = form.cleaned_data.get('name').strip()
             school.email = form.cleaned_data.get('email').strip()
             school.location = form.cleaned_data.get('location').strip()
-            school.mobile_id = int(form.cleaned_data.get('hidden_mobile').split('-')[0].strip()).strip()
-            school.save()  # save the updated school object
+            mobile = form.cleaned_data.get('hidden_mobile')
+            theschool = School.objects.get(mobile__mobile = mobile)
+            school.mobile_id = theschool
+            print(school.mobile_id)
+            try:
+                school.save()  # save the updated school object
+            except Exception as exception:
+                messages.error(request, exception)
+                return redirect('editschool', schoolid)
             return redirect('adminschoolpage')
         else:
             messages.error(request, 'Invalid entry')
@@ -827,7 +883,6 @@ def deleteschool(request, schoolid):
 
 @never_cache
 def addschool(request):
-    summarydictionary = {}
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -838,22 +893,41 @@ def addschool(request):
     if request.method == 'POST':
         form = AddSchoolForm(data=request.POST)
         if form.is_valid():
-            name = form.cleaned_data.get('name').strip()
-            location = form.cleaned_data.get('location').strip()
-            email = form.cleaned_data.get('email').strip()
-            mobile = transform_phone_number(form.cleaned_data.get('mobile')).strip()
+            with transaction.atomic():
+                name = form.cleaned_data.get('name').strip()
+                location = form.cleaned_data.get('location').strip()
+                email = form.cleaned_data.get('email').strip()
+                mobile = transform_phone_number(str(form.cleaned_data.get('mobile'))).strip()
 
-            mobile = Mobile(mobile=mobile)
-            mobile.save()
+                isavailable = School.objects.filter(mobile__mobile=mobile).exists()
+                if isavailable:
+                    messages.error(request, "A school with this mobile already exists!")
+                    return redirect('addschool')
+                else:
+                    mobile = Mobile(mobile=mobile)
 
-            newschool = School(
-                name=name,
-                location=location,
-                mobile=mobile,
-                email=email,
-            )
+                try:
+                    mobile.save()
+                except Exception as exception:
+                    messages.error(request, exception)
+                    return redirect('addschool')
 
-            newschool.save()
+                newschool = School(
+                    name=name,
+                    location=location,
+                    mobile=mobile,
+                    email=email,
+                )
+
+                try:
+                    newschool.save()
+                    messages.success(request, "School added successfully!")
+                    return redirect('adminschoolpage')
+
+                except Exception as exception:
+                    messages.error(request, f"{exception}")
+                    return redirect('addschool')
+
         return redirect('adminschoolpage')
 
     else:
@@ -881,11 +955,14 @@ def adminhomepage(request):
         return redirect('loginpage')
 
     summarydictionary = getDetails(user)
+    
+    mobiles = Mobile.objects.aggregate(total_tokensconsumed=Sum('tokensconsumed'))
+    tokensconsumed = mobiles['total_tokensconsumed']
 
-    mobiles = Mobile.objects.aggregate(total_standingtoken=Sum('standingtoken'))
-    totalstandingtokens = mobiles['total_standingtoken']
-    minutespertoken = Constant.objects.get(id=0).minutespertokenOrequivalentminutes
-    relativetalktime = totalstandingtokens * minutespertoken
+    mobiles = Mobile.objects.aggregate(total_minutesconsumed=Sum('minutesconsumed'))
+    minutesconsumed = mobiles['total_minutesconsumed']
+
+    relativetalktime = minutesconsumed
 
     # Get the current month's start and end dates
     current_month_start = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -906,7 +983,7 @@ def adminhomepage(request):
     numberofusers = AppUser.objects.count()
     activedevices = Mobile.objects.filter(active=True).count()
 
-    summarydictionary['totalstandingtokens'] = round(totalstandingtokens, 2)
+    summarydictionary['totalstandingtokens'] = round(tokensconsumed, 2)
     summarydictionary['totalrelativetalktime'] = round(relativetalktime, 2)
     summarydictionary['thismonthtransactionslist'] = thismonthtransactionslist
     summarydictionary['thismonthtotalincome'] = thismonthtotalincome
@@ -945,8 +1022,11 @@ def editdevice(request, mobileid):
     if request.method == 'POST':
         form = EditMobileForm(data=request.POST)
         if form.is_valid():
-            device.active = form.cleaned_data.get('active').strip()
-            device.save()
+            device.active = form.cleaned_data.get('active')
+            try:
+                device.save()
+            except Exception as exception:
+                return redirect('editdevice')
             return redirect('admindevicepage')
         else:
             messages.error(request, 'Invalid entry')
@@ -970,15 +1050,18 @@ def admintokenspage(request):
     else:
         return redirect('loginpage')
 
-    minutespertoken = Constant.objects.get(id=0).minutespertokenOrequivalentminutes
     tokenconsumedsum = Mobile.objects.aggregate(total_tokensconsumed=Sum('tokensconsumed'))
     tokenconsumedsum = tokenconsumedsum['total_tokensconsumed']
+
+    minutesconsumed = Mobile.objects.aggregate(total_minutesconsumed=Sum('minutesconsumed'))
+    minutesconsumed = minutesconsumed['total_minutesconsumed']
+
     summarydictionary = getDetails(user)
     devicelist = Mobile.objects.all()
     summarydictionary['devicelist'] = devicelist
     print(f"Hallo {tokenconsumedsum}")
     summarydictionary['tokenconsumedsum'] = round(tokenconsumedsum, 2)
-    summarydictionary['relativetalktime'] = round(minutespertoken * tokenconsumedsum, 2)
+    summarydictionary['relativetalktime'] = round(minutesconsumed, 2)
 
     response = render(request, "admintokenstable.html", {"summary": summarydictionary})
     return response
@@ -1012,8 +1095,12 @@ def editagent(request, agentid):
         if form.is_valid():
             agent.fullname = form.cleaned_data.get('fullname').strip()
             agent.phone = transform_phone_number(form.cleaned_data.get('phone')).strip()
-            agent.school = form.cleaned_data.get('school').strip()
-            agent.save()
+            agent.school = form.cleaned_data.get('school')
+            try:
+                agent.save()
+            except Exception as exception:
+                return redirect('editagent')
+
             return redirect('adminagentspage')
         else:
             messages.error(request, 'Invalid entry')
@@ -1054,15 +1141,22 @@ def addagent(request):
     if request.method == 'POST':
         form = AddAgentForm(data=request.POST)
         if form.is_valid():
+            fullname = form.cleaned_data.get('fullname')
+            if not fullname:
+                return redirect('addagent')
             fullname = form.cleaned_data.get('fullname').strip()
+            phone = transform_phone_number(form.cleaned_data.get('phone'))
+            if not phone:
+                return redirect('addagent')
             phone = transform_phone_number(form.cleaned_data.get('phone')).strip()
-            password = form.cleaned_data.get('password').strip()
-            school = form.cleaned_data.get('school').strip()
 
+            school = form.cleaned_data.get('school')
+            if not school:
+                return redirect('addagent')
             email = f"{phone}@gmail.com"
             username = f"{phone}@gmail.com"
-            password = password
-            confirmpassword = password
+            password = phone
+            confirmpassword = phone
 
             # Create a new AppUser instance
             user = AppUser(
@@ -1076,11 +1170,18 @@ def addagent(request):
                 isparent=False,
                 isagent=True,
                 school=school,
+                phone = phone
             )
 
+
             # Save the new AppUser instance
-            user.save()
-            newUser = user
+            try:
+                user.save()
+                newUser = user
+            except Exception as exception:
+                print("Here here here")
+                messages.error(request, exception)
+                return redirect('addagent')
 
         return redirect('adminagentspage')
 
@@ -1137,25 +1238,41 @@ def loginhomepage(request):
 
 
 @never_cache
-def adminsettingshomepage(request):
-    setting = Constant.objects.get(id=0)
+def settingshomepage(request):
     if request.user.is_authenticated:
         user = request.user
         summarydictionary = getDetails(user)
     else:
         return redirect('loginpage')
+    school = summarydictionary['school']
+
+    setting = None
+    try:
+        setting = Constant.objects.get(school = school)
+    except Constant.DoesNotExist:
+        print("Settig Does Not Exist!")
+        setting = Constant.objects.create(school=school)
+        print(f"setting is {setting}")
+
     if request.method == 'POST':
         form = EditSettingsForm(data=request.POST)
         if form.is_valid():
-            setting.activationamount = form.cleaned_data.get('activationamount').strip()
-            setting.minutespertokenOrequivalentminutes = form.cleaned_data.get(
-                'minutespertokenOrequivalentminutes').strip()
-            shillingspertokenOrequivalentshillings = round(
-                setting.minutespertokenOrequivalentminutes / setting.minutepershilling, 2)
-            setting.minutepershilling = form.cleaned_data.get('minutepershilling').strip()
+            setting.activationamount = form.cleaned_data.get('activationamount')
+            setting.minutespertokenOrequivalentminutes = form.cleaned_data.get('minutespertokenOrequivalentminutes')
+            setting.minutepershilling = form.cleaned_data.get('minutepershilling')
+            shillingspertokenOrequivalentshillings = round(setting.minutespertokenOrequivalentminutes / setting.minutepershilling, 2)
+
+            setting.minutepershilling = form.cleaned_data.get('minutepershilling')
             setting.shillingspertokenOrequivalentshillings = shillingspertokenOrequivalentshillings
-            setting.save()
-            return redirect('adminsettingshomepage')
+            try:
+                print(f"School is {school}")
+                print(f"Setting is {setting}")
+                setting.save()
+            except Exception as exception:
+                print(f"Exception is {exception}")
+                messages.error(request, exception)
+                return redirect('settingshomepage')
+            return redirect('settingshomepage')
         else:
             messages.error(request, 'Invalid entry')
     else:
@@ -1173,7 +1290,7 @@ def adminsettingshomepage(request):
     summarydictionary['form'] = form
     summarydictionary['shillingspertokenOrequivalentshillings'] = setting.shillingspertokenOrequivalentshillings
 
-    tokenlist = Token.objects.all()
+    tokenlist = Token.objects.filter(school = school)
     summarydictionary['tokenlist'] = tokenlist
 
     response = render(request, "editsettings.html", {"summary": summarydictionary})
@@ -1182,15 +1299,16 @@ def adminsettingshomepage(request):
 
 @never_cache
 def addtoken(request):
-    constant = Constant.objects.get(id=0)
-    minutespertoken = constant.minutespertokenOrequivalentminutes
-    shillingspertoken = constant.shillingspertokenOrequivalentshillings
-
     if request.user.is_authenticated:
         user = request.user
         summarydictionary = getDetails(user)
     else:
         return redirect('loginpage')
+
+    school = summarydictionary['school']
+    constant = Constant.objects.get(school = school)
+    minutespertoken = constant.minutespertokenOrequivalentminutes
+    shillingspertoken = constant.shillingspertokenOrequivalentshillings
 
     if request.method == 'POST':
         token_value = float(request.POST.get('numbeoftokens'))
@@ -1202,11 +1320,15 @@ def addtoken(request):
         else:
             equivalentshillings = shillingspertoken * token_value
             token = Token(
+                school = school,
                 tokenamount=token_value,
                 equivalentshillings=equivalentshillings
             )
-            token.save()
-            return redirect('adminsettingshomepage')
+            try:
+                token.save()
+            except Exception as exception:
+                return redirect('addtoken')
+            return redirect('settingshomepage')
 
     response = redirect('adminhomepage')
     return response
@@ -1218,7 +1340,7 @@ def deletetoken(request, tokenid):
         getDetails(request.user)
         token = Token.objects.get(id=tokenid)
         token.delete()
-        return redirect('adminsettingshomepage')
+        return redirect('settingshomepage')
     else:
         return redirect('loginpage')
 
@@ -1231,21 +1353,29 @@ def tokenlist(request, studentid):
     else:
         return redirect('loginpage')
 
-    tokenlist = Token.objects.all()
-    minutespertoken = Constant.objects.get(id=0).minutespertokenOrequivalentminutes
+    school = summarydictionary['school']
+    tokenlist = Token.objects.filter(school = school)
+    minutespertoken = Constant.objects.get(school = school).minutespertokenOrequivalentminutes
     summarydictionary['tokenlist'] = []
+    
+    print(f"Token list is {tokenlist}")
 
-    for token in tokenlist:
-        token.relativeminutes = token.tokenamount * minutespertoken
-        summarydictionary['tokenlist'].append(token)
+    if tokenlist:
+        for token in tokenlist:
+            token.relativeminutes = token.tokenamount * minutespertoken
+            summarydictionary['tokenlist'].append(token)
 
-    print(tokenlist)
-    studentname = Student.objects.get(id=studentid).fullname
-    summarydictionary['studentid'] = studentid
-    summarydictionary['studentname'] = studentname
+        print(tokenlist)
+        studentname = Student.objects.get(id=studentid).fullname
+        summarydictionary['studentid'] = studentid
+        summarydictionary['studentname'] = studentname
 
-    response = render(request, "admintokenlisttable.html", {"summary": summarydictionary})
-    return response
+        response = render(request, "admintokenlisttable.html", {"summary": summarydictionary})
+        return response
+    else:
+        messages.error(request, f"School settings have not been completed!")
+        
+        return redirect('studentshomepage')
 
 
 @never_cache
@@ -1810,3 +1940,139 @@ def importParent(request):
 
     response = render(request, "agent_import_parents.html", {"summary": summarydictionary})
     return response
+
+
+
+@never_cache
+def adminsettingshomepage(request):
+    if request.user.is_authenticated:
+        user = request.user
+        summarydictionary = getDetails(user)
+    else:
+        return redirect('loginpage')
+
+    if request.method == 'POST':
+        form = MinutesForm(data=request.POST)
+        if form.is_valid():
+            mobile = form.cleaned_data.get('mobile')
+            print(f"Mobile - {mobile}")
+            minutes = form.cleaned_data.get('minutes')
+
+            try:
+
+                mobileInstance = Mobile.objects.get(mobile=mobile)
+
+                try:
+                    school = School.objects.get(mobile = mobile)
+                    try:
+                        minutespertoken = Constant.objects.get(school = school).minutespertokenOrequivalentminutes
+                        tokens = minutes / minutespertoken if minutespertoken else 0
+                        mobileInstance = Mobile.objects.get(mobile=mobile)
+
+                        oldstandingtoken = mobileInstance.standingtoken
+                        oldstandingminutes = mobileInstance.standingminutes
+
+                        newminutes = oldstandingminutes + minutes
+                        newtokens = oldstandingtoken + tokens
+
+                        mobileInstance.standingtoken = newtokens
+                        mobileInstance.standingminutes = newminutes
+                    except Constant.DoesNotExist:
+                        messages.error(request, f"Please add settings for {school}")
+                        return redirect('adminsettingshomepage')
+
+                        pass
+                except Exception as exception:
+                    messages.error(request, f"{exception}")
+                    return redirect('adminsettingshomepage')
+
+
+            except Exception as exception:
+                messages.error(request, exception)
+                return redirect('adminsettingshomepage')
+
+            try:
+                mobileInstance.save()
+                messages.error(request, 'Mobile was updated!')
+                return redirect('adminsettingshomepage')
+            except:
+                messages.error(request, 'Invalid entry')
+                return redirect('adminsettingshomepage')
+
+        else:
+            messages.error(request, 'Invalid entry')
+    else:
+        form = MinutesForm()
+
+    summarydictionary['form'] = form
+
+    response = render(request, "addadminsetting.html", {"summary": summarydictionary})
+    return response
+
+
+
+
+@never_cache
+def adddevice(request):
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        return redirect('loginpage')
+
+    summarydictionary = getDetails(user)
+
+    if request.method == 'POST':
+        form = DevicesForm(data=request.POST)
+        if form.is_valid():
+            mobile = transform_phone_number(form.cleaned_data.get('mobile')).strip()
+            if not mobile:
+                messages.error(request, "You did not enter the mobile")
+                return redirect('adddevice')
+
+            try:
+                Mobile.objects.get(mobile = mobile)
+                messages.error(request, f"Mobile {mobile} already exists!")
+                return redirect('adddevice')
+            except Mobile.DoesNotExist:
+                try:
+                    newMobileInstance = Mobile.objects.create(mobile=mobile)
+                    newMobileInstance.save()
+                    messages.success(request, "Mobile saved successfully!")
+                    return redirect('admindevicepage')
+                except Exception as exception:
+                    messages.error(request, exception)
+                    return redirect('adddevice')
+
+        else:
+            print("Form is not valid")
+            messages.error(request, "Form is not valid")
+            return redirect('adddevice')
+
+
+    else:
+        form = DevicesForm()
+        summarydictionary['form'] = form
+
+    response = render(request, "adddevice.html", {"summary": summarydictionary})
+    return response
+
+
+
+@never_cache
+def deleteDevice(request, mobileid):
+    if request.user.is_authenticated:
+        try:
+            mobile = Mobile.objects.get(id=mobileid)
+            try:
+                School.objects.get(mobile_id=mobileid)
+                messages.error(request, f"A school registered with this mobile exits! You cannot delete it!")
+                return redirect('admindevicepage')
+            except School.DoesNotExist:
+                mobile.delete()
+                messages.success(request, f"Mobile deleted successfully")
+                return redirect('admindevicepage')
+        except Mobile.DoesNotExist:
+            messages.error(request, f"Does Not Exist")
+            return redirect('admindevicepage')
+    else:
+        return redirect('loginpage')

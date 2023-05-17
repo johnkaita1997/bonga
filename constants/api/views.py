@@ -39,7 +39,8 @@ class ConstantListView(generics.ListAPIView):
     serializer_class = ConstantSerializer
 
     def get_queryset(self):
-        queryset = Constant.objects.all()
+        school = self.request.query_params.get('school')
+        queryset = Constant.objects.filter(school=school)
         return queryset
 
 

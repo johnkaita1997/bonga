@@ -28,6 +28,7 @@ class CallsCreateView(generics.CreateAPIView):
             mobileObj.standingtoken = mobileObj.standingtoken - tokensused
             mobileObj.standingminutes = mobileObj.standingminutes - minutesused
             mobileObj.tokensconsumed = mobileObj.tokensconsumed + tokensused
+            mobileObj.minutesconsumed = mobileObj.minutesconsumed + minutesused
             mobileObj.save()
         else:
             print(f"Mobile Not Found For Mobile {mobilecalled}")

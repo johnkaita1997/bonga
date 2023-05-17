@@ -1,13 +1,15 @@
 {% extends 'menubar.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
-{% if message %}
-    <script>
-        alert('{{message}}')
-    </script>
-{% endif %}
-
 {% block body %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                alert("{{ message }}")
+            </script>
+        {% endfor %}
+    {% endif %}
 
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -32,15 +34,18 @@
             </div>
             <br>
 
-            <form id="myForm" action="{% url 'tokenpurchase' studentid=summary.studentid amount=summary.amount %}" method="post">
+            <form id="myForm" action="{% url 'tokenpurchase' studentid=summary.studentid amount=summary.amount %}"
+                  method="post">
                 {% csrf_token %}
                 {{ summary.form | crispy }}
-                 <label style="color: #FFFFFF">Mobile :</label>
-                <input style="padding: 2px" type="number" name="mobile" id="mobile" value="{{ summary.mobile }}">
+                <label style="color: #FFFFFF">Mobile :</label>
+                <input style="padding: 2px" type="number" name="mobile" id="mobile" value="{{ summary.mobile }}" placeholder="254...">
                 <br>
                 <br>
                 <br>
-                <button style="background-color: {{ summary.color }}; width: 320px" type="submit" id="submit"  value="submit">Make Payment</button>
+                <button style="background-color: {{ summary.color }}; width: 320px" type="submit" id="submit"
+                        value="submit">Make Payment
+                </button>
             </form>
 
             <div id="processing-dialog" style="display:none">

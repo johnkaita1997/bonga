@@ -1,22 +1,22 @@
 {% extends 'menubar.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
-{% if messages %}
-    {% for message in messages %}
-        <script>
-            alert("{{ message }}")
-        </script>
-    {% endfor %}
-{% endif %}
-
 {% block body %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                alert("{{ message }}")
+            </script>
+        {% endfor %}
+    {% endif %}
 
     <div class="container-fluid">
 
         <br>
         <h3 style="font-size: 23px" class="mt-3">Define Excel Tables First</h3><br>
 
-       <form id="myForm" action="" method="post" enctype="multipart/form-data">
+        <form id="myForm" action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ summary.form | crispy }}
             <br>

@@ -2,6 +2,14 @@
 {% load static %}
 {% block body %}
 
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                alert("{{ message }}")
+            </script>
+        {% endfor %}
+    {% endif %}
+
 
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -13,7 +21,7 @@
             <h1 class="h3 mb-0 text-gray-800"></h1>
             <div>
                 <a href="{% url 'addschool' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary
-                       shadow-sm"><i class=""></i> Register New School</a>
+                       shadow-sm"><i class=""></i>Register New School</a>
             </div>
         </div>
         <br>

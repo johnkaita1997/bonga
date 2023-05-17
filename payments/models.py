@@ -39,6 +39,7 @@ class Transaction(DatingModel, models.Model):
     student =  models.ForeignKey(Student, on_delete=models.CASCADE, null=True, related_name="studenttransactions")
 
     class Meta:
+        ordering = ["-date_created"]
         app_label = "payments"
 
     def __str__(self):

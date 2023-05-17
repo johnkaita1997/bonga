@@ -8,5 +8,8 @@ class MobileSerializer(serializers.ModelSerializer):
     school = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Mobile
-        fields = "__all__"
+        fields = ['id', 'standingtoken', 'standingminutes', 'tokensconsumed', 'active', 'mobile', 'minutesconsumed', 'school']
+
+    def get_school(self, obj):
+        return obj.school.name
 

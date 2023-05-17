@@ -1,12 +1,12 @@
 {% extends 'adminmenubar.html' %}
 {% load static %}
-{% if message %}
-    <script>
-        alert('{{message}}')
-    </script>
-{% endif %}
-
 {% block body %}
+
+    {% if message %}
+        <script>
+            alert('{{message}}')
+        </script>
+    {% endif %}
 
     <br>
     <!-- Begin Page Content -->
@@ -59,10 +59,9 @@
             </div>
 
 
-
             <div class="col-lg-6">
                 <div class="card shadow mb-4">
-                     <div class="card-header py-3">
+                    <div class="card-header py-3">
                         <h6 align="center" class="m-0 font-weight-bold text-primary">INCOME THIS MONTH</h6>
                     </div>
                     <div class="card-body">
@@ -121,7 +120,7 @@
 
             <div class="col-lg-6">
                 <div class="card shadow mb-4">
-                   <div class="card-header py-3">
+                    <div class="card-header py-3">
                         <h6 align="center" class="m-0 font-weight-bold text-primary">ACTIVE DEVICES</h6>
                     </div>
                     <div class="card-body">

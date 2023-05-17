@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from school.api.serializer import SchoolSerializer
 from school.models import School
 
-
 class SchoolCreateView(generics.CreateAPIView):
 
         serializer_class = SchoolSerializer

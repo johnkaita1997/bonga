@@ -36,12 +36,13 @@ class MobileDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
+        school = instance.school  # Get the associated school
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
 
         if 'standingminutes' in serializer.validated_data:
             try:
-                tokenperminutes = Constant.objects.get(pk=0).minutespertokenOrequivalentminutes
+                tokenperminutes = Constant.objects.get(school = school).minutespertokenOrequivalentminutes
                 serializer.validated_data['standingtoken'] = tokenperminutes * serializer.validated_data['standingminutes']
 
                 oldstandingminutes = instance.standingminutes

@@ -43,6 +43,7 @@ class Student(DatingModel, models.Model):
 
 
     class Meta:
+        ordering = ["-date_created"]
         app_label = "student"
 
     def __str__(self):
