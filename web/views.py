@@ -1368,6 +1368,7 @@ def tokenlist(request, studentid):
         print(tokenlist)
         studentname = Student.objects.get(id=studentid).fullname
         summarydictionary['studentid'] = studentid
+        # summarydictionary['studentname'] = studentname
         summarydictionary['studentname'] = studentname
 
         response = render(request, "admintokenlisttable.html", {"summary": summarydictionary})
