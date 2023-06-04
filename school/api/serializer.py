@@ -24,7 +24,6 @@ class SchoolWebSerializer(serializers.ModelSerializer):
     agents = AppUserSerializer(many=True)
     num_students = serializers.SerializerMethodField()
     code = serializers.SerializerMethodField()
-    mobile = MobileSerializer()
 
     class Meta:
         model = School

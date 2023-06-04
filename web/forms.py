@@ -9,7 +9,8 @@ from appuser.models import AppUser
 from constants.models import Constant
 from contact.models import Contact
 from mobile.models import Mobile
-from school.models import School, SchoolWebCreate
+from school.models import School
+from mobile.models import SchoolWebCreate
 from student.models import Student
 from web.models import ImportStudentModel, ImportParentModel, MobileMinutes
 
@@ -126,21 +127,21 @@ class EditSchoolForm(forms.ModelForm):
     # specify the name of model to use
     class Meta:
         model = School
-        exclude = ()
+        exclude = ('mobile',)
 
-        widgets = {
-            'mobile': ReadOnlySelect,
-            'hidden_mobile': forms.HiddenInput,
-        }
+        # widgets = {
+        #     'mobile': ReadOnlySelect,
+        #     'hidden_mobile': forms.HiddenInput,
+        # }
 
     # add a hidden field for mobile
-    hidden_mobile = forms.CharField(widget=forms.HiddenInput, required=False)
+    # hidden_mobile = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    def __init__(self, *args, **kwargs):
-        # pass the initial value of mobile to the hidden field
-        initial = kwargs.get('initial', {})
-        self.base_fields['hidden_mobile'].initial = initial.get('mobile')
-        super().__init__(*args, **kwargs)
+    # def __init__(self, *args, **kwargs):
+    #     # pass the initial value of mobile to the hidden field
+    #     initial = kwargs.get('initial', {})
+    #     self.base_fields['hidden_mobile'].initial = initial.get('mobile')
+    #     super().__init__(*args, **kwargs)
 
 
 
@@ -262,7 +263,7 @@ class MinutesForm(forms.ModelForm):
 class DevicesForm(forms.ModelForm):
     class Meta:
         model = Mobile
-        fields = ["active", "mobile"]
+        fields = ["active", "mobile", "school"]
 
 
 

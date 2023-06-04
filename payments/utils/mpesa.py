@@ -10,7 +10,9 @@ from rest_framework import serializers
 from rest_framework.response import Response
 
 from constants.models import Constant
+from mobile.models import Mobile
 from payments.models import Transaction
+from school.models import School
 from student.models import Student
 
 
@@ -204,14 +206,15 @@ class MpesaGateway:
 
                 school = student.school
 
-                mobile = school.mobile
-                oldmobilestandingtoken = mobile.standingtoken
-                oldmobilestandingminutes = mobile.standingminutes
+                listOfMobiles = Mobile.objects.filter(school = school)
+                length = len(listOfMobiles)
+                eachMobileToBeDeducted = userpaid / length
 
-                print(f"ALSO FOUND {student.fullname} - {school.name} - {mobile} - {oldmobilestandingtoken} - {oldmobilestandingminutes}")
-                mobile.standingtoken = oldmobilestandingtoken - (userpaid / shillingspertokenOrequivalentshillings)
-                mobile.standingminutes = oldmobilestandingminutes - (userpaid * minutespershilling)
-                mobile.save()
+                for mobile in listOfMobiles:
+                    mobile.standingtoken -= eachMobileToBeDeducted
+                    mobile.standingminutes -= (userpaid * minutespershilling)
+                    mobile.save()
+                    print(f"ALSO FOUND {student.fullname} - {school.name} - {mobile}")
 
             elif transaction.purpose == "REGISTRATION":
                 student = transaction.student

@@ -1,5 +1,6 @@
 import os
 import time
+import traceback
 
 import openpyxl as openpyxl
 from django.contrib import messages
@@ -57,14 +58,22 @@ def getDetails(user):
         print(f"There {school}")
 
     try:
-        schoolname = school.name
+
+        summarydictionary['fullname'] = fullname
+        summarydictionary['userid'] = str(userid)[:5].upper()
+
+        schoolname = None
         schoolmobile = None
         unusedtokens = 0
         tokensconsumed = 0
+
         try:
-            schoolmobile = school.mobile.mobile
-            unusedtokens = school.mobile.standingtoken
-            tokensconsumed = school.mobile.tokensconsumed
+            schooldevices =  Mobile.objects.filter(school__id=school.id)
+            sum_standingtoken = schooldevices.aggregate(total_standingtoken=Sum('standingtoken'))['total_standingtoken']
+            unusedtokens = sum_standingtoken
+            sum_tokensconsumed = schooldevices.aggregate(total_tokensconsumed=Sum('tokensconsumed'))['total_tokensconsumed']
+            tokensconsumed = sum_tokensconsumed
+            schoolname = school.name
         except:
             pass
 
@@ -77,8 +86,6 @@ def getDetails(user):
 
         numberofparents = len(parents)
 
-        summarydictionary['fullname'] = fullname
-        summarydictionary['userid'] = str(userid)[:5].upper()
         summarydictionary['school'] = school
         summarydictionary['schoolname'] = schoolname
         summarydictionary['schoolmobile'] = schoolmobile
@@ -101,15 +108,30 @@ def getDetails(user):
         totalschoolrevenue = schooltransactions.aggregate(Sum('amount'))['amount__sum']
         summarydictionary['totalschoolrevenue'] = totalschoolrevenue
 
-        minutespertoken = Constant.objects.get(school=school).minutespertokenOrequivalentminutes
-        print(f"Minutespertoken is ${min}")
-        relativetalketime = unusedtokens * minutespertoken
-        summarydictionary['usedtokensmins'] = round((tokensconsumed) * minutespertoken, 2)
-        summarydictionary['minutespertoken'] = minutespertoken
-        summarydictionary['relativetalketime'] = round(relativetalketime, 2)
+        try:
+            minutespertoken = Constant.objects.get(school__id=school.id).minutespertokenOrequivalentminutes
+            print(f"Minutespertoken is ${min}")
+            relativetalketime = unusedtokens * minutespertoken
+            summarydictionary['usedtokensmins'] = round((tokensconsumed) * minutespertoken, 2)
+            summarydictionary['minutespertoken'] = minutespertoken
+            summarydictionary['relativetalketime'] = round(relativetalketime, 2)
+        except:
+            schooldevices = Mobile.objects.filter(school__id=school.id)
+            sum_standingtoken = schooldevices.aggregate(total_standingtoken=Sum('standingtoken'))['total_standingtoken']
+            unusedtokens = sum_standingtoken
+
+            sum_tokensconsumed = schooldevices.aggregate(total_tokensconsumed=Sum('tokensconsumed'))['total_tokensconsumed']
+            tokensconsumed = sum_tokensconsumed
+            sum_minutesconsumed = schooldevices.aggregate(total_minutesconsumed=Sum('minutesconsumed'))['total_minutesconsumed']
+            minutesconsumed = sum_minutesconsumed
+
+            relativetalketime = unusedtokens * minutespertoken
+            summarydictionary['usedtokensmins'] = tokensconsumed
+            summarydictionary['relativetalketime'] = minutesconsumed
 
     except Exception as exception:
-        print(f"This is the error {exception}")
+        traceback_str = traceback.format_exc()
+        print(f"This is the error {traceback_str}")
         pass
 
     return summarydictionary
@@ -772,6 +794,8 @@ def adminhomepage(request):
     mobilestokens = Mobile.objects.aggregate(total_standingtoken=Sum('standingtoken'))
     mobileminutes = Mobile.objects.aggregate(total_standingtoken=Sum('standingminutes'))
 
+    print(f"Mobile Tokens is {mobilestokens}")
+
     totalstandingtokens = mobilestokens['total_standingtoken']
     totalstandingminutes = mobileminutes['total_standingminutes']
     relativetalktime = totalstandingminutes
@@ -840,9 +864,6 @@ def editschool(request, schoolid):
             school.email = form.cleaned_data.get('email').strip()
             school.location = form.cleaned_data.get('location').strip()
             mobile = form.cleaned_data.get('hidden_mobile')
-            theschool = School.objects.get(mobile__mobile = mobile)
-            school.mobile_id = theschool
-            print(school.mobile_id)
             try:
                 school.save()  # save the updated school object
             except Exception as exception:
@@ -856,9 +877,8 @@ def editschool(request, schoolid):
             initial={
                 'name': school.name,
                 'email': school.email,
-                'mobile': school.mobile,
                 'location': school.location,
-                'hidden_mobile': school.mobile,  # assign mobile to hidden_mobile
+                # 'hidden_mobile': school.mobile,  # assign mobile to hidden_mobile
             }
         )
 
@@ -897,25 +917,10 @@ def addschool(request):
                 name = form.cleaned_data.get('name').strip()
                 location = form.cleaned_data.get('location').strip()
                 email = form.cleaned_data.get('email').strip()
-                mobile = transform_phone_number(str(form.cleaned_data.get('mobile'))).strip()
-
-                isavailable = School.objects.filter(mobile__mobile=mobile).exists()
-                if isavailable:
-                    messages.error(request, "A school with this mobile already exists!")
-                    return redirect('addschool')
-                else:
-                    mobile = Mobile(mobile=mobile)
-
-                try:
-                    mobile.save()
-                except Exception as exception:
-                    messages.error(request, exception)
-                    return redirect('addschool')
 
                 newschool = School(
                     name=name,
                     location=location,
-                    mobile=mobile,
                     email=email,
                 )
 
@@ -983,14 +988,17 @@ def adminhomepage(request):
     numberofusers = AppUser.objects.count()
     activedevices = Mobile.objects.filter(active=True).count()
 
-    summarydictionary['totalstandingtokens'] = round(tokensconsumed, 2)
-    summarydictionary['totalrelativetalktime'] = round(relativetalktime, 2)
-    summarydictionary['thismonthtransactionslist'] = thismonthtransactionslist
-    summarydictionary['thismonthtotalincome'] = thismonthtotalincome
-    summarydictionary['lastmonthtransactionslist'] = lastmonthtransactionslist
-    summarydictionary['lastmonthtotalincome'] = lastmonthtotalincome
-    summarydictionary['numberofusers'] = numberofusers
-    summarydictionary['activedevices'] = activedevices
+    try:
+        summarydictionary['totalrelativetalktime'] = round(relativetalktime, 2)
+        summarydictionary['thismonthtransactionslist'] = thismonthtransactionslist
+        summarydictionary['thismonthtotalincome'] = thismonthtotalincome
+        summarydictionary['lastmonthtransactionslist'] = lastmonthtransactionslist
+        summarydictionary['lastmonthtotalincome'] = lastmonthtotalincome
+        summarydictionary['numberofusers'] = numberofusers
+        summarydictionary['activedevices'] = activedevices
+        summarydictionary['totalstandingtokens'] = round(tokensconsumed, 2)
+    except:
+        pass
 
     response = render(request, "adminindex.html", {"summary": summarydictionary})
     return response
@@ -1050,18 +1058,21 @@ def admintokenspage(request):
     else:
         return redirect('loginpage')
 
-    tokenconsumedsum = Mobile.objects.aggregate(total_tokensconsumed=Sum('tokensconsumed'))
-    tokenconsumedsum = tokenconsumedsum['total_tokensconsumed']
+    try:
+        tokenconsumedsum = Mobile.objects.aggregate(total_tokensconsumed=Sum('tokensconsumed'))
+        tokenconsumedsum = tokenconsumedsum['total_tokensconsumed']
 
-    minutesconsumed = Mobile.objects.aggregate(total_minutesconsumed=Sum('minutesconsumed'))
-    minutesconsumed = minutesconsumed['total_minutesconsumed']
+        minutesconsumed = Mobile.objects.aggregate(total_minutesconsumed=Sum('minutesconsumed'))
+        minutesconsumed = minutesconsumed['total_minutesconsumed']
 
-    summarydictionary = getDetails(user)
-    devicelist = Mobile.objects.all()
-    summarydictionary['devicelist'] = devicelist
-    print(f"Hallo {tokenconsumedsum}")
-    summarydictionary['tokenconsumedsum'] = round(tokenconsumedsum, 2)
-    summarydictionary['relativetalktime'] = round(minutesconsumed, 2)
+        summarydictionary = getDetails(user)
+        devicelist = Mobile.objects.all()
+        summarydictionary['devicelist'] = devicelist
+        print(f"Hallo {tokenconsumedsum}")
+        summarydictionary['tokenconsumedsum'] = round(tokenconsumedsum, 2)
+        summarydictionary['relativetalktime'] = round(minutesconsumed, 2)
+    except:
+        pass
 
     response = render(request, "admintokenstable.html", {"summary": summarydictionary})
     return response
@@ -1960,24 +1971,28 @@ def adminsettingshomepage(request):
             minutes = form.cleaned_data.get('minutes')
 
             try:
-
                 mobileInstance = Mobile.objects.get(mobile=mobile)
 
                 try:
-                    school = School.objects.get(mobile = mobile)
+                    school = mobileInstance.school
                     try:
-                        minutespertoken = Constant.objects.get(school = school).minutespertokenOrequivalentminutes
-                        tokens = minutes / minutespertoken if minutespertoken else 0
-                        mobileInstance = Mobile.objects.get(mobile=mobile)
+                        try:
+                            minutespertoken = Constant.objects.get(school = school).minutespertokenOrequivalentminutes
+                        except:
+                            messages.error(request, f"Please add settings for {school}")
+                            return redirect('adminsettingshomepage')
+                        else:
+                            tokens = minutes / minutespertoken if minutespertoken else 0
+                            mobileInstance = Mobile.objects.get(mobile=mobile)
 
-                        oldstandingtoken = mobileInstance.standingtoken
-                        oldstandingminutes = mobileInstance.standingminutes
+                            oldstandingtoken = mobileInstance.standingtoken
+                            oldstandingminutes = mobileInstance.standingminutes
 
-                        newminutes = oldstandingminutes + minutes
-                        newtokens = oldstandingtoken + tokens
+                            newminutes = oldstandingminutes + minutes
+                            newtokens = oldstandingtoken + tokens
 
-                        mobileInstance.standingtoken = newtokens
-                        mobileInstance.standingminutes = newminutes
+                            mobileInstance.standingtoken = newtokens
+                            mobileInstance.standingminutes = newminutes
                     except Constant.DoesNotExist:
                         messages.error(request, f"Please add settings for {school}")
                         return redirect('adminsettingshomepage')
@@ -2026,6 +2041,10 @@ def adddevice(request):
         form = DevicesForm(data=request.POST)
         if form.is_valid():
             mobile = transform_phone_number(form.cleaned_data.get('mobile')).strip()
+            school = form.cleaned_data.get('school')
+            theschool = School.objects.get(id = school.id)
+
+            print(f"----- {theschool}")
             if not mobile:
                 messages.error(request, "You did not enter the mobile")
                 return redirect('adddevice')
@@ -2036,7 +2055,7 @@ def adddevice(request):
                 return redirect('adddevice')
             except Mobile.DoesNotExist:
                 try:
-                    newMobileInstance = Mobile.objects.create(mobile=mobile)
+                    newMobileInstance = Mobile.objects.create(mobile=mobile, school = theschool)
                     newMobileInstance.save()
                     messages.success(request, "Mobile saved successfully!")
                     return redirect('admindevicepage')
@@ -2064,16 +2083,30 @@ def deleteDevice(request, mobileid):
     if request.user.is_authenticated:
         try:
             mobile = Mobile.objects.get(id=mobileid)
-            try:
-                School.objects.get(mobile_id=mobileid)
-                messages.error(request, f"A school registered with this mobile exits! You cannot delete it!")
-                return redirect('admindevicepage')
-            except School.DoesNotExist:
-                mobile.delete()
-                messages.success(request, f"Mobile deleted successfully")
-                return redirect('admindevicepage')
+            mobile.delete()
+            messages.success(request, f"Mobile deleted successfully")
+            return redirect('admindevicepage')
         except Mobile.DoesNotExist:
             messages.error(request, f"Does Not Exist")
             return redirect('admindevicepage')
     else:
         return redirect('loginpage')
+
+
+
+@never_cache
+def schooldevices(request, schoolid):
+    summarydictionary = {}
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        return redirect('loginpage')
+
+    summarydictionary = getDetails(user)
+    mobilelist = Mobile.objects.filter(school_id=schoolid)
+    summarydictionary['mobilelist'] = mobilelist
+
+    print(f"Mobile List {mobilelist}")
+
+    response = render(request, "schoolmobiletable.html", {"summary": summarydictionary})
+    return response
