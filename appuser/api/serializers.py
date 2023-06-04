@@ -8,7 +8,6 @@ from school.models import School
 class mySchoolSerializer(serializers.ModelSerializer):
     students = serializers.PrimaryKeyRelatedField(queryset=School.objects.all(), many=True)
     agents = serializers.PrimaryKeyRelatedField(queryset=AppUser.objects.all(), many=True)
-    mobile = MobileSerializer()
 
     class Meta:
         model = School
