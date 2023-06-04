@@ -6,6 +6,7 @@ from school.models import School
 
 
 class mySchoolSerializer(serializers.ModelSerializer):
+    # A comment
     students = serializers.PrimaryKeyRelatedField(queryset=School.objects.all(), many=True)
     agents = serializers.PrimaryKeyRelatedField(queryset=AppUser.objects.all(), many=True)
 
