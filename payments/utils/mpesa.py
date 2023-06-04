@@ -49,7 +49,7 @@ class MpesaGateway:
         self.passkey ="9cd4dd3777a83ffc18c70766a77e1f2077dbaea17188f98235158ed533f3331d"
         self.consumer_secret = "DurpnNk6Z21uDjaW"
         self.password = self.generate_password()
-        self.c2b_callback = "http://3.91.226.73/api/v1/payments/callback"
+        self.c2b_callback = "https://tafatalk.co.ke/api/v1/payments/callback"
         self.access_token_url = 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
         self.checkout_url = 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
 
