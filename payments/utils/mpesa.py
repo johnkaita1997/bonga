@@ -199,7 +199,8 @@ class MpesaGateway:
                 shillingspertokenOrequivalentshillings = Constant.objects.get(school=student.school).shillingspertokenOrequivalentshillings
                 # SUBTRACT TOKENS AND MINUTES FROM USER
 
-                student.tokenbalance = student.tokenbalance + (userpaid / shillingspertokenOrequivalentshillings)
+
+                student.tokenbalance = student.tokenbalance + (userpaid * shillingspertokenOrequivalentshillings)
                 print(f"Student token balance is {student.tokenbalance} and userpaid {userpaid}  and shillings per token is {shillingspertokenOrequivalentshillings} so new token is {student.tokenbalance + (userpaid / shillingspertokenOrequivalentshillings)}")
                 student = transaction.student
                 student.save()
