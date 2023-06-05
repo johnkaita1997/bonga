@@ -33,7 +33,7 @@ urlpatterns = [
 
     path('schools/add', webviews.addschool, name='addschool'),
     path('schools/devices/<str:schoolid>', webviews.schooldevices, name='schooldevices'),
-    # path('schools/devices/<str:schoolid>', webviews.schooldevices, name='schooldevices'),
+    path('schools/devices/agent/<str:schoolid>', webviews.agentschooldevices, name='agentschooldevices'),
     path('schools/edit/<str:schoolid>', webviews.editschool, name='editschool'),
     path('schools/delete/<str:schoolid>', webviews.deleteschool, name='deleteschool'),
     path('schools/view/<str:schoolid>', webviews.viewschool, name='viewschool'),

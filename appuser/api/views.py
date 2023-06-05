@@ -1,18 +1,24 @@
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, status, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from appuser.api.serializers import AppUserSerializer
 from appuser.models import AppUser
+from school.models import School
 
 
 class AppUserCreateView(generics.CreateAPIView):
     serializer_class = AppUserSerializer
 
     def create(self, request, *args, **kwargs):
+        school_id = request.data.pop('school', None)  # Remove 'school' from request.data
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        if school_id:
+            school = get_object_or_404(School, id=school_id)  # Retrieve the School instance
+            serializer.validated_data['school'] = school
         self.perform_create(serializer)
         return Response({'details': 'User saved successfully'}, status=status.HTTP_201_CREATED)
 
@@ -26,6 +32,11 @@ class AppUserCreateView(generics.CreateAPIView):
         isagent = serializer.validated_data['isagent']
         password = serializer.validated_data['password']
         confirmpassword = serializer.validated_data['confirmpassword']
+        school = None
+        try:
+            school = serializer.validated_data['school']
+        except:
+            pass
 
         # validate email
         qs = AppUser.objects.filter(username=email)
@@ -44,7 +55,8 @@ class AppUserCreateView(generics.CreateAPIView):
             "isadmin": isadmin,
             "isagent": isagent,
             "password": password,
-            "confirmpassword": confirmpassword
+            "confirmpassword": confirmpassword,
+            "school": school
         }
 
         if 'school' in serializer.validated_data:

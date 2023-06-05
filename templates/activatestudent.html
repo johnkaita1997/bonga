@@ -12,7 +12,7 @@
 
     <!-- Begin Page Content -->
     <div class="container-fluid">
-        <div style="background: blue; width: 80%; margin-left: 10%; margin-top: 10%" class="text-center">
+        <div style="background-color: {{ summary.color }}; width: 80%; margin-left: 10%; margin-top: 10%" class="text-center">
             <br>
             <br>
 
@@ -28,8 +28,16 @@
                 <p style="color: #ffffff">Thank You!</p>
                 <!-- Page Heading -->
                 <div>
-                    <a style="background: {{ summary.color }}  !important;" href="{% url 'studentshomepage' %}"
+
+                    {% if summary.istheadmin %}
+                        <a style="background: {{ summary.color }}  !important;" href="{% url 'adminhomepage' %}"
                        class="btn btn-sm btn-primary shadow-sm"><i class=""></i>Go Back</a>
+                    {% else %}
+{#                        <a style="background: {{ summary.color }}  !important;" href="{% url 'agenthomepage' %}"#}
+{#                       class="btn btn-sm btn-primary shadow-sm"><i class=""></i>Go Back</a>#}
+                    {% endif %}
+
+
                 </div>
             </div>
 
@@ -41,12 +49,12 @@
                 <br>
                 <br>
                 <br>
-                <button style="background-color: {{ summary.color }}; width: 320px" type="submit" id="submit"
+                <button style="background-color: black; color: white; width: 320px" type="submit" id="submit"
                         value="submit">Activate Account
                 </button>
             </form>
 
-            <div id="processing-dialog" style="display:none">
+            <div id="processing-dialog" style="display:none; color:white;">
                 <div id="processing-dots">
                     <span></span>
                     <span></span>
@@ -54,7 +62,7 @@
                 </div>
                 <br>
                 <br>
-                <div id="processing" style="margin-top: 20px">
+                <div  id="processing" style="margin-top: 20px; color: white">
                     Processing...
                 </div>
             </div>

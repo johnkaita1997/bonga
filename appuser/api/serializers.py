@@ -16,7 +16,6 @@ class mySchoolSerializer(serializers.ModelSerializer):
 
 
 class AppUserSerializer(serializers.ModelSerializer):
-
     contact = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
     school = mySchoolSerializer(read_only=True)
 

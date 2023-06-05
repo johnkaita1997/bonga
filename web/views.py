@@ -53,6 +53,8 @@ def getDetails(user):
             pass
         print("Here 2323")
     else:
+        print(f"There {app_user}")
+        print(f"There {app_user.school}")
         school = app_user.school
         print(f"There {school}")
 
@@ -1014,6 +1016,23 @@ def admindevicepage(request):
     summarydictionary['mobilelist'] = mobilelist
 
     response = render(request, "adminmobiletable.html", {"summary": summarydictionary})
+    return response
+
+
+
+@never_cache
+def agentdevicepage(request):
+    summarydictionary = {}
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        return redirect('loginpage')
+
+    summarydictionary = getDetails(user)
+    mobilelist = Mobile.objects.all()
+    summarydictionary['mobilelist'] = mobilelist
+
+    response = render(request, "agentschoolmobiletable.html", {"summary": summarydictionary})
     return response
 
 
@@ -2093,7 +2112,6 @@ def deleteDevice(request, mobileid):
 
 @never_cache
 def schooldevices(request, schoolid):
-    summarydictionary = {}
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -2106,4 +2124,20 @@ def schooldevices(request, schoolid):
     print(f"Mobile List {mobilelist}")
 
     response = render(request, "schoolmobiletable.html", {"summary": summarydictionary})
+    return response
+
+@never_cache
+def agentschooldevices(request, schoolid):
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        return redirect('loginpage')
+
+    summarydictionary = getDetails(user)
+    mobilelist = Mobile.objects.filter(school_id=schoolid)
+    summarydictionary['mobilelist'] = mobilelist
+
+    print(f"Mobile List {mobilelist}")
+
+    response = render(request, "agentschoolmobiletable.html", {"summary": summarydictionary})
     return response
