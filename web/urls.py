@@ -56,6 +56,7 @@ urlpatterns = [
     path('agents/delete/<str:agentid>', webviews.deleteagent, name='deleteagent'),
 
     path('settings', webviews.settingshomepage, name='settingshomepage'),
+    # path('admin/settings', webviews.adminsettingshomepage, name='adminsettingshomepage'),
     path('admin/settings', webviews.adminsettingshomepage, name='adminsettingshomepage'),
 
 ]
