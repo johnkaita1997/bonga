@@ -76,10 +76,25 @@
                                 <td>
                                     <div align="center">
                                         {% if summary.istheadmin %}
-                                            <a style="background: green; width: 160px"
-                                               href="{% url 'tokenlist' studentid=valued.id %}"
-                                               class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                                    class=""></i> Recharge Tokens </a>
+
+                                            {% if valued.active == True %}
+                                                <a style="background: green; width: 160px"
+                                                   href="{% url 'tokenlist' studentid=valued.id %}"
+                                                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                                        class=""></i> Recharge Tokens </a>
+
+                                                <a style="background: green; width: 160px"
+                                                   href="{% url 'activateStudent' studentid=valued.id %}"
+                                                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                                        class=""></i> Active </a>
+                                            {% else %}
+                                                <a style="width: 160px"
+                                                   href="{% url 'activateStudent' studentid=valued.id %}"
+                                                   class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm"><i
+                                                        class=""></i> Activate </a>
+                                            {% endif %}
+
+
                                         {% else %}
                                             {% if valued.active == True %}
                                                 <a style="background: green; width: 160px"
