@@ -12,7 +12,8 @@
 
     <!-- Begin Page Content -->
     <div class="container-fluid">
-        <div style="background-color: {{ summary.color }}; width: 80%; margin-left: 10%; margin-top: 10%" class="text-center">
+        <div style="background-color: {{ summary.color }}; width: 80%; margin-left: 10%; margin-top: 10%"
+             class="text-center">
             <br>
             <br>
 
@@ -30,11 +31,11 @@
                 <div>
 
                     {% if summary.istheadmin %}
-                        <a style="background: {{ summary.color }}  !important;" href="{% url 'adminhomepage' %}"
-                      {% comment %} class="btn btn-sm btn-primary shadow-sm"><i class=""></i>Go Back</a>{% endcomment %}
+                        {% comment %}  <a style="background: {{ summary.color }}  !important;" href="{% url 'adminhomepage' %}"
+                       class="btn btn-sm btn-primary shadow-sm"><i class=""></i>Go Back</a>{% endcomment %}
                     {% else %}
-{#                        <a style="background: {{ summary.color }}  !important;" href="{% url 'agenthomepage' %}"#}
-{#                       class="btn btn-sm btn-primary shadow-sm"><i class=""></i>Go Back</a>#}
+                        {% comment %}<a style="background: {{ summary.color }}  !important;" href="{% url 'agenthomepage' %}"
+                           class="btn btn-sm btn-primary shadow-sm"><i class=""></i>Go Back</a>{% endcomment %}
                     {% endif %}
 
 
@@ -45,7 +46,8 @@
                 {% csrf_token %}
                 {{ summary.form | crispy }}
                 <label style="color: #FFFFFF">Mobile :</label>
-                <input style="padding: 2px" type="number"  name="mobile" id="mobile" value="{{ summary.mobile }}" placeholder="254...">
+                <input style="padding: 2px" type="number" name="mobile" id="mobile" value="{{ summary.mobile }}"
+                       placeholder="254...">
                 <br>
                 <br>
                 <br>
@@ -62,7 +64,7 @@
                 </div>
                 <br>
                 <br>
-                <div  id="processing" style="margin-top: 20px; color: white">
+                <div id="processing" style="margin-top: 20px; color: white">
                     Processing...
                 </div>
             </div>
