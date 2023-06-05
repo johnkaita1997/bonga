@@ -39,13 +39,12 @@ def getDetails(user):
     fullname = app_user.fullname
     userid = app_user.id
 
-    if 'istheadmin' in globals() and istheadmin != None and istheadmin != "":
-        if istheadmin:
-            print("USER IS ADMIN")
-            summarydictionary['color'] = "#0041C4"
-        else:
-            print("USER IS NOT ADMIN")
-            summarydictionary['color'] = "#F15A24"
+    if app_user.isadmin:
+        summarydictionary['color'] = "#0041C4"
+        summarydictionary['istheadmin'] = True
+    elif app_user.isagent:
+        summarydictionary['color'] = "#F15A24"
+        summarydictionary['istheadmin'] = False
 
     if 'globalschoolid' in globals() and globalschoolid != None and globalschoolid != "":
         try:
@@ -96,8 +95,6 @@ def getDetails(user):
         summarydictionary['numberofRegisteredStudents'] = numberofRegisteredStudents
         summarydictionary['parents'] = parents
         summarydictionary['numberofparents'] = numberofparents
-
-        summarydictionary['istheadmin'] = istheadmin
 
         students = Student.objects.filter(school=school)
         summarydictionary['studentslist'] = students
