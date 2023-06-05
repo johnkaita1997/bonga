@@ -31,7 +31,7 @@
 
                     {% if summary.istheadmin %}
                         <a style="background: {{ summary.color }}  !important;" href="{% url 'adminhomepage' %}"
-                       class="btn btn-sm btn-primary shadow-sm"><i class=""></i>Go Back</a>
+                      {% comment %} class="btn btn-sm btn-primary shadow-sm"><i class=""></i>Go Back</a>{% endcomment %}
                     {% else %}
 {#                        <a style="background: {{ summary.color }}  !important;" href="{% url 'agenthomepage' %}"#}
 {#                       class="btn btn-sm btn-primary shadow-sm"><i class=""></i>Go Back</a>#}
