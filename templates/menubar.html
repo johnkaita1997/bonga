@@ -133,11 +133,14 @@
                 <span>Settings</span></a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'agentschooldevices' summary.school.id %}">
-                <i class="fas fa-fw fa-table"></i>
-                <span>Devices</span></a>
-        </li>
+        {% if summary.school.id %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'agentschooldevices' summary.school.id %}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Devices</span></a>
+            </li>
+        {% endif %}
+
 
         {% if summary.istheadmin %}
             <li class="nav-item">

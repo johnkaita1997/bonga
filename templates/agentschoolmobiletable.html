@@ -16,11 +16,11 @@
         <br>
         <!-- Page Heading -->
         <div class="d-flex justify-content-between align-items-center">
-{#            <h1 class="h3 mb-0 text-gray-800"></h1>#}
-{#            <div>#}
-{#                <a href="{% url 'adddevice' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">#}
-{#                    <i class=""></i>Add A Device</a>#}
-{#            </div>#}
+            {#            <h1 class="h3 mb-0 text-gray-800"></h1>#}
+            {#            <div>#}
+            {#                <a href="{% url 'adddevice' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">#}
+            {#                    <i class=""></i>Add A Device</a>#}
+            {#            </div>#}
         </div>
         <br>
 
@@ -38,6 +38,9 @@
                             <th>School</th>
                             <th>Device Mobile</th>
                             <th>Device Status</th>
+                            {% if summary.istheadmin %}
+                                <th>Actions</th>
+                            {% endif %}
                         </tr>
                         </thead>
                         <tfoot>
@@ -46,6 +49,9 @@
                             <th>School</th>
                             <th>Device Mobile</th>
                             <th>Device Status</th>
+                            {% if summary.istheadmin %}
+                                <th>Actions</th>
+                            {% endif %}
                         </tr>
                         </tfoot>
                         <tbody>

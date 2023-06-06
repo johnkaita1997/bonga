@@ -98,7 +98,7 @@
                                         {% else %}
                                             {% if valued.active == True %}
                                                 <a style="background: green; width: 160px"
-                                                   href=""
+                                                   href="{% url 'activateStudent' studentid=valued.id %}"
                                                    class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                                         class=""></i> Active </a>
                                             {% else %}
@@ -108,6 +108,7 @@
                                                         class=""></i> Activate </a>
                                             {% endif %}
                                         {% endif %}
+
                                     </div>
 
                                     <br>
