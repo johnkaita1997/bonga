@@ -210,9 +210,10 @@ class MpesaGateway:
                 listOfMobiles = Mobile.objects.filter(school = school)
                 length = len(listOfMobiles)
                 eachMobileToBeDeducted = userpaid / length
+                convertAmountToToken = eachMobileToBeDeducted / shillingspertokenOrequivalentshillings
 
                 for mobile in listOfMobiles:
-                    mobile.standingtoken -= eachMobileToBeDeducted
+                    mobile.standingtoken -= convertAmountToToken
                     mobile.standingminutes -= (userpaid * minutespershilling)
                     mobile.save()
                     print(f"ALSO FOUND {student.fullname} - {school.name} - {mobile}")
