@@ -47,6 +47,6 @@ class ImportParentModel(models.Model):
 # Create your models here.
 class MobileMinutes(models.Model):
     mobile = models.ForeignKey(Mobile, on_delete=models.CASCADE, related_name="mobileminutes")
-    minutes  =  models.FloatField(max_length=255, blank=True, null=True,default=None)
+    minutes  =  models.FloatField(max_length=255,default=None)
     def __str__(self):
         return f"{self.minutes}"

@@ -2,8 +2,8 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.core.validators import MinValueValidator
+from django.db import IntegrityError
 from django.forms.widgets import Select
-from dal import autocomplete
 
 from appuser.models import AppUser
 from constants.models import Constant
@@ -28,12 +28,15 @@ class AppUserBackend(ModelBackend):
         return None
 
 
+
 # create a ModelForm
 class AppUserForm(forms.ModelForm):
     # specify the name of model to use
     class Meta:
         model = AppUser
         fields = "__all__"
+
+
 
 
 # create a ModelForm
@@ -48,9 +51,10 @@ class EditParentForm(forms.ModelForm):
         )
 
 
+
+
 # create a ModelForm
 class EditStudentForm(forms.ModelForm):
-    # specify the name of model to use
     class Meta:
         model = Student
         exclude = (
@@ -66,14 +70,15 @@ class EditStudentForm(forms.ModelForm):
             'email',
             'school',
             'user',
+            'contacts'
         )
+
 
 
 class ReadOnlySelect(Select):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.attrs["disabled"] = "disabled"
-
 
 class AddStudentForm(forms.ModelForm):
     # specify the name of model to use
@@ -117,6 +122,7 @@ class AddParentForm(forms.ModelForm):
         )
 
 
+
 class EditSchoolForm(forms.ModelForm):
     # specify the name of model to use
     class Meta:
@@ -138,6 +144,7 @@ class EditSchoolForm(forms.ModelForm):
     #     super().__init__(*args, **kwargs)
 
 
+
 class AddSchoolForm(forms.ModelForm):
     # specify the name of model to use
     class Meta:
@@ -151,7 +158,6 @@ class EditMobileForm(forms.ModelForm):
         model = Mobile
         fields = ('active',)
 
-
 class EditAgentForm(forms.ModelForm):
     # specify the name of model to use
     class Meta:
@@ -161,7 +167,6 @@ class EditAgentForm(forms.ModelForm):
             'fullname',
             'phone',
         )
-
     def __init__(self, *args, **kwargs):
         super(EditAgentForm, self).__init__(*args, **kwargs)
         self.fields['school'].required = True
@@ -205,7 +210,6 @@ class EditSettingsForm(forms.ModelForm):
             'activationamount',
             'minutepershilling',
             'minutespertokenOrequivalentminutes',)
-
     def __init__(self, *args, **kwargs):
         super(EditSettingsForm, self).__init__(*args, **kwargs)
         self.fields['activationamount'].required = True
@@ -237,15 +241,14 @@ class EditSettingsForm(forms.ModelForm):
 
 class ImportStudentsExcelForm(forms.ModelForm):
     excel_file = forms.FileField(label='Upload Excel file', required=True)
-
     class Meta:
         model = ImportStudentModel
         fields = "__all__"
 
 
+
 class ImportParentExcelForm(forms.ModelForm):
     excel_file = forms.FileField(label='Upload Excel file', required=True)
-
     class Meta:
         model = ImportParentModel
         fields = "__all__"
@@ -258,17 +261,10 @@ class MinutesForm(forms.ModelForm):
 
 
 class DevicesForm(forms.ModelForm):
-    school = forms.ModelChoiceField(
-        queryset=School.objects.all(),
-        fields=["active", "mobile", "school"],
-        widget=autocomplete.ModelSelect2(
-            url='school-autocomplete',
-            attrs={
-                'data-placeholder': 'Search for a school...',
-                'data-minimum-input-length': 1,  # Minimum number of characters to trigger search
-            },
-        ),
-    )
-
     class Meta:
         model = Mobile
+        fields = ["active", "mobile", "school"]
+
+
+
+

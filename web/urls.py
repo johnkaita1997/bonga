@@ -2,6 +2,11 @@ from django.urls import path
 
 import web.views as webviews
 
+
+
+
+
+
 urlpatterns = [
 
     path('', webviews.loginhomepage, name='loginpage'),
@@ -16,6 +21,8 @@ urlpatterns = [
     path('students/edit/<str:studentid>', webviews.editStudent, name='editstudent'),
     path('students/delete/<str:studentid>', webviews.deletestudent, name='deletestudent'),
     path('students/activate/<str:studentid>', webviews.activateStudent, name='activateStudent'),
+    path('student/addparent/<str:studentid>/<str:parentid>/', webviews.addParentToStudent, name='addParentToStudent'),
+    path('student/removeparent/<str:studentid>/<str:parentid>/', webviews.removeParentFromStudent, name='removeParentFromStudent'),
 
     path('parents', webviews.parentshomepage, name='parentshomepage'),
     path('parents/add', webviews.addparent, name='addparent'),
@@ -56,8 +63,6 @@ urlpatterns = [
     path('agents/delete/<str:agentid>', webviews.deleteagent, name='deleteagent'),
 
     path('settings', webviews.settingshomepage, name='settingshomepage'),
-    # path('admin/settings', webviews.adminsettingshomepage, name='adminsettingshomepage'),
-    path('admin/settings', webviews.adminsettingshomepage, name='adminsettingshomepage'),
+    path('addMinutesToDevice', webviews.addMinutesToDevice, name='addMinutesToDevice'),
 
 ]
-

@@ -6,7 +6,7 @@
 {% endif %}
 
 <!DOCTYPE html>
-<html  lang="en">
+<html lang="en">
 
 <head>
 
@@ -76,10 +76,11 @@
 <body id="page-top">
 
 <!-- Page Wrapper -->
-<div id="wrapper" >
+<div id="wrapper">
 
     <!-- Sidebar -->
-    <ul style="background: {{ summary.color }}" class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <ul style="background: {{ summary.color }}" class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+        id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'adminhomepage' %}">
@@ -131,7 +132,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'adminsettingshomepage' %}">
+            <a class="nav-link" href="">
                 <i class="fas fa-fw fa-table"></i>
                 <span>Settings</span></a>
         </li>
@@ -221,7 +222,6 @@
 
 <!-- Page level custom scripts -->
 <script src="{% static 'assets/admin/js/demo/datatables-demo.js' %}"></script>
-
 
 
 </body>

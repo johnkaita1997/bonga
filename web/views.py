@@ -268,6 +268,7 @@ def parentshomepage(request):
         user = request.user
     else:
         return redirect('loginpage')
+
     summarydictionary = getDetails(request, user)
 
     contactlist = Contact.objects.filter(contactuser__school=summarydictionary['school'])
@@ -464,15 +465,23 @@ def editStudent(request, studentid):
         return redirect('loginpage')
 
     student = Student.objects.get(id=studentid)
+    contactlist = Contact.objects.filter(contactuser__school=summarydictionary['school'])
+    serializer = ContactsWeberializer(contactlist, many=True)
+    serialized_data = serializer.data
+    summarydictionary['parents'] = serialized_data
+    studentParents = student.contacts.all()
+    summarydictionary['studentparents'] = studentParents
+
+
     if request.method == 'POST':
         form = EditStudentForm(data=request.POST)
         if form.is_valid():
             try:
                 student.kcpeindexnumber = form.cleaned_data.get('kcpeindexnumber').strip()
+                student.fullname = form.cleaned_data.get('fullname').strip()
             except:
                 messages.error(request, "kcpeindexnumber is required")
                 return redirect('editstudent', studentid=studentid)
-            student.contacts.set(form.cleaned_data.get('contacts'))
             try:
                 student.save()  # save the updated student object
             except Exception as exception:
@@ -486,10 +495,10 @@ def editStudent(request, studentid):
                 'fullname': student.fullname,
                 'kcpeindexnumber': student.kcpeindexnumber,
                 'registrationnumber': student.registrationnumber,
-                'contacts': student.contacts.all()
             }
         )
     summarydictionary['form'] = form
+    summarydictionary['studentid'] = studentid
     summarydictionary['contacts'] = student.contacts.all()
     print(f"Contacts wake ni {student.contacts.all()}")
     response = render(request, "editstudent.html", {"summary": summarydictionary})
@@ -1255,66 +1264,6 @@ def loginhomepage(request):
 
 
 @never_cache
-def settingshomepage(request):
-    if request.user.is_authenticated:
-        user = request.user
-        summarydictionary = getDetails(request, user)
-    else:
-        return redirect('loginpage')
-    school = summarydictionary['school']
-
-    setting = None
-    try:
-        setting = Constant.objects.get(school = school)
-    except Constant.DoesNotExist:
-        print("Settig Does Not Exist!")
-        setting = Constant.objects.create(school=school)
-        print(f"setting is {setting}")
-
-    if request.method == 'POST':
-        form = EditSettingsForm(data=request.POST)
-        if form.is_valid():
-            setting.activationamount = form.cleaned_data.get('activationamount')
-            setting.minutespertokenOrequivalentminutes = form.cleaned_data.get('minutespertokenOrequivalentminutes')
-            setting.minutepershilling = form.cleaned_data.get('minutepershilling')
-            shillingspertokenOrequivalentshillings = round(setting.minutespertokenOrequivalentminutes / setting.minutepershilling, 2)
-
-            setting.minutepershilling = form.cleaned_data.get('minutepershilling')
-            setting.shillingspertokenOrequivalentshillings = shillingspertokenOrequivalentshillings
-            try:
-                print(f"School is {school}")
-                print(f"Setting is {setting}")
-                setting.save()
-            except Exception as exception:
-                print(f"Exception is {exception}")
-                messages.error(request, exception)
-                return redirect('settingshomepage')
-            return redirect('settingshomepage')
-        else:
-            messages.error(request, 'Invalid entry')
-    else:
-        form = EditSettingsForm(
-            initial={
-                'activationamount': setting.activationamount,
-                'minutespertokenOrequivalentminutes': setting.minutespertokenOrequivalentminutes,
-                'minutepershilling': setting.minutepershilling,
-            }
-        )
-
-    summarydictionary['activationamount'] = setting.activationamount
-    summarydictionary['minutepershilling'] = setting.minutepershilling
-    summarydictionary['minutespertoken'] = setting.minutespertokenOrequivalentminutes
-    summarydictionary['form'] = form
-    summarydictionary['shillingspertokenOrequivalentshillings'] = setting.shillingspertokenOrequivalentshillings
-
-    tokenlist = Token.objects.filter(school = school)
-    summarydictionary['tokenlist'] = tokenlist
-
-    response = render(request, "editsettings.html", {"summary": summarydictionary})
-    return response
-
-
-@never_cache
 def addtoken(request):
     if request.user.is_authenticated:
         user = request.user
@@ -1332,7 +1281,7 @@ def addtoken(request):
         if token_value <= 0:
             message = "Token value must be greater than 0."
             messages.error(request, message)
-            return redirect('adminsettingshomepage')
+            return redirect('adminhomepage')
 
         else:
             equivalentshillings = shillingspertoken * token_value
@@ -1962,79 +1911,6 @@ def importParent(request):
 
 
 @never_cache
-def adminsettingshomepage(request):
-    if request.user.is_authenticated:
-        user = request.user
-        summarydictionary = getDetails(request, user)
-    else:
-        return redirect('loginpage')
-
-    if request.method == 'POST':
-        form = MinutesForm(data=request.POST)
-        if form.is_valid():
-            mobile = form.cleaned_data.get('mobile')
-            print(f"Mobile - {mobile}")
-            minutes = form.cleaned_data.get('minutes')
-
-            try:
-                mobileInstance = Mobile.objects.get(mobile=mobile)
-
-                try:
-                    school = mobileInstance.school
-                    try:
-                        try:
-                            minutespertoken = Constant.objects.get(school = school).minutespertokenOrequivalentminutes
-                        except:
-                            messages.error(request, f"Please add settings for {school}")
-                            return redirect('adminsettingshomepage')
-                        else:
-                            tokens = minutes / minutespertoken if minutespertoken else 0
-                            mobileInstance = Mobile.objects.get(mobile=mobile)
-
-                            oldstandingtoken = mobileInstance.standingtoken
-                            oldstandingminutes = mobileInstance.standingminutes
-
-                            newminutes = oldstandingminutes + minutes
-                            newtokens = oldstandingtoken + tokens
-
-                            mobileInstance.standingtoken = newtokens
-                            mobileInstance.standingminutes = newminutes
-                    except Constant.DoesNotExist:
-                        messages.error(request, f"Please add settings for {school}")
-                        return redirect('adminsettingshomepage')
-
-                        pass
-                except Exception as exception:
-                    messages.error(request, f"{exception}")
-                    return redirect('adminsettingshomepage')
-
-
-            except Exception as exception:
-                messages.error(request, exception)
-                return redirect('adminsettingshomepage')
-
-            try:
-                mobileInstance.save()
-                messages.error(request, 'Mobile was updated!')
-                return redirect('adminsettingshomepage')
-            except:
-                messages.error(request, 'Invalid entry')
-                return redirect('adminsettingshomepage')
-
-        else:
-            messages.error(request, 'Invalid entry')
-    else:
-        form = MinutesForm()
-
-    summarydictionary['form'] = form
-
-    response = render(request, "addadminsetting.html", {"summary": summarydictionary})
-    return response
-
-
-
-
-@never_cache
 def adddevice(request):
     if request.user.is_authenticated:
         user = request.user
@@ -2131,3 +2007,176 @@ def agentschooldevices(request, schoolid):
 
     response = render(request, "agentschoolmobiletable.html", {"summary": summarydictionary})
     return response
+
+@never_cache
+def addParentToStudent(request, studentid, parentid):
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        return redirect('loginpage')
+
+    getDetails(request, user)
+    try:
+        parent = Contact.objects.get(id=parentid)
+        student = Student.objects.get(id=studentid)
+        student.contacts.add(parent)
+        student.save()
+    except (Contact.DoesNotExist, Student.DoesNotExist):
+        parent = None
+        student = None
+    except Exception as e:
+        pass
+
+    return redirect('editstudent', studentid)
+
+
+@never_cache
+def removeParentFromStudent(request, studentid, parentid):
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        return redirect('loginpage')
+
+    getDetails(request, user)
+    try:
+        parent = Contact.objects.get(id=parentid)
+        student = Student.objects.get(id=studentid)
+        student.contacts.remove(parent)
+        student.save()
+    except (Contact.DoesNotExist, Student.DoesNotExist):
+        parent = None
+        student = None
+    except Exception as e:
+        pass
+
+    return redirect('editstudent', studentid)
+
+
+
+
+@never_cache
+def settingshomepage(request):
+    if request.user.is_authenticated:
+        user = request.user
+        summarydictionary = getDetails(request, user)
+    else:
+        return redirect('loginpage')
+    school = summarydictionary['school']
+
+    setting = None
+    try:
+        setting = Constant.objects.get(school = school)
+    except Constant.DoesNotExist:
+        print("Settig Does Not Exist!")
+        setting = Constant.objects.create(school=school)
+        print(f"setting is {setting}")
+
+    if request.method == 'POST':
+        form = EditSettingsForm(data=request.POST)
+        if form.is_valid():
+            setting.activationamount = form.cleaned_data.get('activationamount')
+            setting.minutespertokenOrequivalentminutes = form.cleaned_data.get('minutespertokenOrequivalentminutes')
+            setting.minutepershilling = form.cleaned_data.get('minutepershilling')
+            shillingspertokenOrequivalentshillings = round(setting.minutespertokenOrequivalentminutes / setting.minutepershilling, 2)
+
+            setting.minutepershilling = form.cleaned_data.get('minutepershilling')
+            setting.shillingspertokenOrequivalentshillings = shillingspertokenOrequivalentshillings
+            try:
+                print(f"School is {school}")
+                print(f"Setting is {setting}")
+                setting.save()
+            except Exception as exception:
+                print(f"Exception is {exception}")
+                messages.error(request, exception)
+                return redirect('settingshomepage')
+            return redirect('settingshomepage')
+        else:
+            messages.error(request, 'Invalid entry')
+    else:
+        form = EditSettingsForm(
+            initial={
+                'activationamount': setting.activationamount,
+                'minutespertokenOrequivalentminutes': setting.minutespertokenOrequivalentminutes,
+                'minutepershilling': setting.minutepershilling,
+            }
+        )
+
+    summarydictionary['activationamount'] = setting.activationamount
+    summarydictionary['minutepershilling'] = setting.minutepershilling
+    summarydictionary['minutespertoken'] = setting.minutespertokenOrequivalentminutes
+    summarydictionary['form'] = form
+    summarydictionary['shillingspertokenOrequivalentshillings'] = setting.shillingspertokenOrequivalentshillings
+
+    tokenlist = Token.objects.filter(school = school)
+    summarydictionary['tokenlist'] = tokenlist
+
+    school = summarydictionary['school']
+    schoolid = school.id
+    mobilelist = Mobile.objects.filter(school_id=schoolid)
+    summarydictionary['mobilelist'] = mobilelist
+
+    response = render(request, "editsettings.html", {"summary": summarydictionary})
+    return response
+
+
+
+@never_cache
+def addMinutesToDevice(request):
+    if request.user.is_authenticated:
+        user = request.user
+        summarydictionary = getDetails(request, user)
+    else:
+        return redirect('loginpage')
+    school = summarydictionary['school']
+
+    if request.method == 'POST':
+        mobilenumber = request.POST.get('mobileid')
+        formminutes = request.POST.get('minutes')
+
+        if formminutes and mobilenumber:
+            minutes = float(formminutes)
+
+            try:
+                mobileInstance = Mobile.objects.get(mobile=mobilenumber)
+
+                try:
+                    school = mobileInstance.school
+                    try:
+                        try:
+                            minutespertoken = Constant.objects.get(school=school).minutespertokenOrequivalentminutes
+                        except:
+                            messages.error(request, f"Please add settings for {school}")
+                            return redirect('settingshomepage')
+                        else:
+                            tokens = minutes / minutespertoken if minutespertoken else 0
+                            oldstandingtoken = mobileInstance.standingtoken
+                            oldstandingminutes = mobileInstance.standingminutes
+
+                            newminutes = oldstandingminutes + minutes
+                            newtokens = oldstandingtoken + tokens
+
+                            mobileInstance.standingtoken = newtokens
+                            mobileInstance.standingminutes = newminutes
+                    except Constant.DoesNotExist:
+                        messages.error(request, f"Please add settings for {school}")
+                        return redirect('settingshomepage')
+
+                        pass
+                except Exception as exception:
+                    messages.error(request, f"{exception}")
+                    return redirect('settingshomepage')
+
+
+            except Exception as exception:
+                messages.error(request, exception)
+                return redirect('settingshomepage')
+
+            try:
+                mobileInstance.save()
+                messages.error(request, 'Mobile was updated!')
+                return redirect('settingshomepage')
+            except:
+                messages.error(request, 'Invalid entry')
+                return redirect('settingshomepage')
+
+    return redirect('settingshomepage')

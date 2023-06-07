@@ -50,8 +50,6 @@ INSTALLED_APPS = [
     'calls',
     'tokens',
     'web',
-    'dal',
-    'dal_select2',
 ]
 
 MIDDLEWARE = [
