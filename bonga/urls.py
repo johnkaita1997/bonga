@@ -1,6 +1,8 @@
-
 from django.contrib import admin
 from django.urls import path, include
+from dal import autocomplete
+
+from school.models import School
 
 api_version = 'api/v1/'
 
@@ -17,9 +19,13 @@ api_patterns = [
 
     path('', include('web.urls')),
 
+    path(
+        'school-autocomplete/',
+        autocomplete.Select2QuerySetView.as_view(model=School),
+        name="school-autocomplete"
+    )
+
 ]
-
-
 
 urlpatterns = api_patterns + [
     path('admin/', admin.site.urls),
