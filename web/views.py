@@ -9,6 +9,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from django.db.models import Sum
+from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -31,7 +32,7 @@ from web.forms import EditStudentForm, AddStudentForm, EditParentForm, AddParent
     MinutesForm, DevicesForm
 
 
-def getDetails(user):
+def getDetails(request, user):
     summarydictionary = {}
 
     # Access AppUser model fields
@@ -46,14 +47,15 @@ def getDetails(user):
         summarydictionary['color'] = "#F15A24"
         summarydictionary['istheadmin'] = False
 
-    if 'globalschoolid' in globals() and globalschoolid != None and globalschoolid != "":
+    if 'globalschoolid' in request.session and request.session['globalschoolid'] != None and request.session['globalschoolid'] != "":
         try:
-            school = School.objects.get(id=globalschoolid)
+            school = School.objects.get(id=request.session['globalschoolid'])
         except:
             pass
         print("Here 2323")
     else:
         print(f"There {app_user}")
+        print(f"There {model_to_dict(app_user)}")
         print(f"There {app_user.school}")
         school = app_user.school
         print(f"There {school}")
@@ -142,11 +144,10 @@ def agenthomepage(request, schoolid=None):
         print("User is authenticated")
         user = request.user
         if schoolid:
-            global globalschoolid
-            globalschoolid = schoolid
+            request.session['globalschoolid'] = schoolid
             print("User has passed school id")
 
-        summarydictionary = getDetails(user)
+        summarydictionary = getDetails(request, user)
     else:
         return redirect('loginpage')
     response = render(request, "agentdashboard.html", {"summary": summarydictionary})
@@ -157,7 +158,7 @@ def agenthomepage(request, schoolid=None):
 def studentshomepage(request):
     if request.user.is_authenticated:
         user = request.user
-        summarydictionary = getDetails(user)
+        summarydictionary = getDetails(request, user)
         try:
             students = Student.objects.filter(school=summarydictionary['school'])
             summarydictionary['studentslist'] = students
@@ -189,7 +190,7 @@ def addStudent(request):
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
 
     if request.method == 'POST':
         form = AddStudentForm(data=request.POST)
@@ -263,12 +264,11 @@ def addStudent(request):
 
 
 def parentshomepage(request):
-    summarydictionary = {}
     if request.user.is_authenticated:
         user = request.user
     else:
         return redirect('loginpage')
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
 
     contactlist = Contact.objects.filter(contactuser__school=summarydictionary['school'])
     serializer = ContactsWeberializer(contactlist, many=True)
@@ -289,13 +289,12 @@ def parentshomepage(request):
 
 @never_cache
 def editparent(request, parentid):
-    summarydictionary = {}
     if request.user.is_authenticated:
         user = request.user
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
     parent = Contact.objects.get(id=parentid)
     if request.method == 'POST':
         form = EditParentForm(data=request.POST)
@@ -338,13 +337,12 @@ def deleteparent(request, parentid):
 
 @never_cache
 def addparent(request):
-    summarydictionary = {}
     if request.user.is_authenticated:
         user = request.user
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
 
     if request.method == 'POST':
         form = AddParentForm(data=request.POST)
@@ -406,13 +404,12 @@ def addparent(request):
 
 
 def transactionshomepage(request):
-    summarydictionary = {}
     if request.user.is_authenticated:
         user = request.user
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
 
     schooltransactions = Transaction.objects.filter(student__school=summarydictionary['school'])
     summarydictionary['transactions'] = schooltransactions
@@ -427,7 +424,7 @@ def adminstudentshomepage(request):
     if request.user.is_authenticated:
         user = request.user
 
-        summarydictionary = getDetails(user)
+        summarydictionary = getDetails(request, user)
         try:
             students = Student.objects.filter(school=summarydictionary['school'])
             summarydictionary['studentslist'] = students
@@ -461,7 +458,7 @@ def deletestudent(request, studentid):
 def editStudent(request, studentid):
     if request.user.is_authenticated:
         user = request.user
-        summarydictionary = getDetails(user)
+        summarydictionary = getDetails(request, user)
 
     else:
         return redirect('loginpage')
@@ -504,7 +501,7 @@ def activateStudent(request, studentid):
     if request.user.is_authenticated:
         user = request.user
 
-        summarydictionary = getDetails(user)
+        summarydictionary = getDetails(request, user)
         try:
             students = Student.objects.filter(school=summarydictionary['school'])
             summarydictionary['studentslist'] = students
@@ -572,13 +569,12 @@ def activateStudent(request, studentid):
 
 @never_cache
 def addStudent(request):
-    summarydictionary = {}
     if request.user.is_authenticated:
         user = request.user
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
 
     if request.method == 'POST':
         form = AddStudentForm(data=request.POST)
@@ -668,13 +664,12 @@ def addStudent(request):
 
 @never_cache
 def editparent(request, parentid):
-    summarydictionary = {}
     if request.user.is_authenticated:
         user = request.user
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
     parent = Contact.objects.get(id=parentid)
     if request.method == 'POST':
         form = EditParentForm(data=request.POST)
@@ -717,13 +712,12 @@ def deleteparent(request, parentid):
 
 @never_cache
 def addparent(request):
-    summarydictionary = {}
     if request.user.is_authenticated:
         user = request.user
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
 
     if request.method == 'POST':
         form = AddParentForm(data=request.POST)
@@ -788,7 +782,7 @@ def adminhomepage(request):
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
 
     mobilestokens = Mobile.objects.aggregate(total_standingtoken=Sum('standingtoken'))
     mobileminutes = Mobile.objects.aggregate(total_standingtoken=Sum('standingminutes'))
@@ -833,13 +827,12 @@ def adminhomepage(request):
 
 @never_cache
 def adminschoolpage(request):
-    summarydictionary = {}
     if request.user.is_authenticated:
         user = request.user
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
 
     schoollist = School.objects.all()
     serializer = SchoolWebSerializer(schoollist, many=True)
@@ -881,7 +874,7 @@ def editschool(request, schoolid):
             }
         )
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
     summarydictionary['form'] = form
     response = render(request, "editschool.html", {"summary": summarydictionary})
     return response
@@ -907,7 +900,7 @@ def addschool(request):
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
 
     if request.method == 'POST':
         form = AddSchoolForm(data=request.POST)
@@ -958,7 +951,7 @@ def adminhomepage(request):
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
     
     mobiles = Mobile.objects.aggregate(total_tokensconsumed=Sum('tokensconsumed'))
     tokensconsumed = mobiles['total_tokensconsumed']
@@ -1005,13 +998,12 @@ def adminhomepage(request):
 
 @never_cache
 def admindevicepage(request):
-    summarydictionary = {}
     if request.user.is_authenticated:
         user = request.user
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
     mobilelist = Mobile.objects.all()
     summarydictionary['mobilelist'] = mobilelist
 
@@ -1022,13 +1014,12 @@ def admindevicepage(request):
 
 @never_cache
 def agentdevicepage(request):
-    summarydictionary = {}
     if request.user.is_authenticated:
         user = request.user
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
     mobilelist = Mobile.objects.all()
     summarydictionary['mobilelist'] = mobilelist
 
@@ -1061,7 +1052,7 @@ def editdevice(request, mobileid):
             }
         )
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
     summarydictionary['form'] = form
     response = render(request, "editdevice.html", {"summary": summarydictionary})
     return response
@@ -1081,7 +1072,7 @@ def admintokenspage(request):
         minutesconsumed = Mobile.objects.aggregate(total_minutesconsumed=Sum('minutesconsumed'))
         minutesconsumed = minutesconsumed['total_minutesconsumed']
 
-        summarydictionary = getDetails(user)
+        summarydictionary = getDetails(request, user)
         devicelist = Mobile.objects.all()
         summarydictionary['devicelist'] = devicelist
         print(f"Hallo {tokenconsumedsum}")
@@ -1096,14 +1087,13 @@ def admintokenspage(request):
 
 @never_cache
 def adminagentspage(request):
-    summarydictionary = {}
     if request.user.is_authenticated:
         user = request.user
     else:
         return redirect('loginpage')
 
     agentlist = AppUser.objects.filter(isagent=True)
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
     summarydictionary['agentlist'] = agentlist
 
     response = render(request, "adminagentstable.html", {"summary": summarydictionary})
@@ -1140,7 +1130,7 @@ def editagent(request, agentid):
             }
         )
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
     summarydictionary['form'] = form
     response = render(request, "editagent.html", {"summary": summarydictionary})
     return response
@@ -1163,7 +1153,7 @@ def addagent(request):
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
 
     if request.method == 'POST':
         form = AddAgentForm(data=request.POST)
@@ -1268,7 +1258,7 @@ def loginhomepage(request):
 def settingshomepage(request):
     if request.user.is_authenticated:
         user = request.user
-        summarydictionary = getDetails(user)
+        summarydictionary = getDetails(request, user)
     else:
         return redirect('loginpage')
     school = summarydictionary['school']
@@ -1328,7 +1318,7 @@ def settingshomepage(request):
 def addtoken(request):
     if request.user.is_authenticated:
         user = request.user
-        summarydictionary = getDetails(user)
+        summarydictionary = getDetails(request, user)
     else:
         return redirect('loginpage')
 
@@ -1364,7 +1354,7 @@ def addtoken(request):
 @never_cache
 def deletetoken(request, tokenid):
     if request.user.is_authenticated:
-        getDetails(request.user)
+        getDetails(request, request.user)
         token = Token.objects.get(id=tokenid)
         token.delete()
         return redirect('settingshomepage')
@@ -1376,7 +1366,7 @@ def deletetoken(request, tokenid):
 def tokenlist(request, studentid):
     if request.user.is_authenticated:
         user = request.user
-        summarydictionary = getDetails(request.user)
+        summarydictionary = getDetails(request, user)
     else:
         return redirect('loginpage')
 
@@ -1412,7 +1402,7 @@ def tokenbuy(request, studentid, amount):
 
     if request.user.is_authenticated:
         user = request.user
-        summarydictionary = getDetails(user)
+        summarydictionary = getDetails(request, user)
     else:
         return redirect('loginpage')
 
@@ -1479,7 +1469,7 @@ def importStudent(request):
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
 
     if request.method == 'POST':
         print("at least am here 0")
@@ -1851,7 +1841,7 @@ def importParent(request):
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
 
     if request.method == 'POST':
         form = ImportParentExcelForm(request.POST, request.FILES)
@@ -1975,7 +1965,7 @@ def importParent(request):
 def adminsettingshomepage(request):
     if request.user.is_authenticated:
         user = request.user
-        summarydictionary = getDetails(user)
+        summarydictionary = getDetails(request, user)
     else:
         return redirect('loginpage')
 
@@ -2051,7 +2041,7 @@ def adddevice(request):
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
 
     if request.method == 'POST':
         form = DevicesForm(data=request.POST)
@@ -2117,7 +2107,7 @@ def schooldevices(request, schoolid):
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
     mobilelist = Mobile.objects.filter(school_id=schoolid)
     summarydictionary['mobilelist'] = mobilelist
 
@@ -2133,7 +2123,7 @@ def agentschooldevices(request, schoolid):
     else:
         return redirect('loginpage')
 
-    summarydictionary = getDetails(user)
+    summarydictionary = getDetails(request, user)
     mobilelist = Mobile.objects.filter(school_id=schoolid)
     summarydictionary['mobilelist'] = mobilelist
 
