@@ -140,8 +140,8 @@
                             {% for valued in summary.mobilelist %}
                                 <tr>
                                     <td>{{ valued.mobile }}</td>
-                                    <td>{{ valued.standingtoken }}</td>
-                                    <td>{{ valued.standingminutes }}</td>
+                                    <td>{{ valued.standingtoken|floatformat:2 }}</td>
+                                    <td>{{ valued.standingminutes|floatformat:2 }}</td>
                                     <td>
                                         <div class="row justify-content-center">
                                             <form action="{% url 'addMinutesToDevice' %}" id="addTokenForm"
