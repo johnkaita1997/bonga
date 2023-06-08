@@ -1425,25 +1425,80 @@ def importStudent(request):
         form = ImportStudentsExcelForm(request.POST, request.FILES)
         if form.is_valid():
             print("at least am here 1")
-            student_fullname_table_name = form.cleaned_data.get('student_fullname_table_name').strip()
-            student_firstname_table_name = form.cleaned_data.get('student_firstname_table_name').strip()
-            student_middlename_table_name = form.cleaned_data.get('student_middlename_table_name').strip()
-            student_lastname_table_name = form.cleaned_data.get('student_lastname_table_name').strip()
-            student_admission_number_table_name = form.cleaned_data.get('student_admission_number_table_name').strip()
-            student_kcpeindex_number_table_name = form.cleaned_data.get('student_kcpeindex_number_table_name').strip()
-            parent_fullname_table_name = form.cleaned_data.get('parent_fullname_table_name').strip()
-            parent_phone_number_table_name = form.cleaned_data.get('parent_phone_number_table_name').strip()
-            contact_person_one_fullname_table_name = form.cleaned_data.get(
-                'contact_person_one_fullname_table_name').strip()
-            contact_person_one_mobile_table_name = form.cleaned_data.get('contact_person_one_mobile_table_name').strip()
-            contact_person_two_fullname_table_name = form.cleaned_data.get(
-                'contact_person_two_fullname_table_name').strip()
-            contact_person_two_mobile_table_name = form.cleaned_data.get('contact_person_two_mobile_table_name').strip()
-            contact_person_three_fullname_table_name = form.cleaned_data.get(
-                'contact_person_three_fullname_table_name').strip()
-            contact_person_three_mobile_table_name = form.cleaned_data.get(
-                'contact_person_three_mobile_table_name').strip()
-            header_row_number = form.cleaned_data.get('header_row_number').strip()
+
+            student_fullname_table_name = None
+            student_firstname_table_name = None
+            student_middlename_table_name = None
+            student_lastname_table_name = None
+            student_admission_number_table_name = None
+            student_kcpeindex_number_table_name = None
+            parent_fullname_table_name = None
+            parent_phone_number_table_name = None
+            contact_person_one_fullname_table_name = None
+            contact_person_one_mobile_table_name = None
+            contact_person_two_fullname_table_name = None
+            contact_person_two_mobile_table_name = None
+            contact_person_three_fullname_table_name = None
+            contact_person_three_mobile_table_name = None
+
+            try:
+                student_fullname_table_name = form.cleaned_data.get('student_fullname_table_name').strip()
+            except:
+                pass
+            try:
+                student_firstname_table_name = form.cleaned_data.get('student_firstname_table_name').strip()
+            except:
+                pass
+            try:
+                student_middlename_table_name = form.cleaned_data.get('student_middlename_table_name').strip()
+            except:
+                pass
+            try:
+                student_lastname_table_name = form.cleaned_data.get('student_lastname_table_name').strip()
+            except:
+                pass
+            try:
+                student_admission_number_table_name = form.cleaned_data.get('student_admission_number_table_name').strip()
+            except:
+                pass
+            try:
+                student_kcpeindex_number_table_name = form.cleaned_data.get('student_kcpeindex_number_table_name').strip()
+            except:
+                pass
+            try:
+                parent_fullname_table_name = form.cleaned_data.get('parent_fullname_table_name').strip()
+            except:
+                pass
+            try:
+                parent_phone_number_table_name = form.cleaned_data.get('parent_phone_number_table_name').strip()
+            except:
+                pass
+            try:
+                contact_person_one_fullname_table_name = form.cleaned_data.get('contact_person_one_fullname_table_name').strip()
+            except:
+                pass
+            try:
+                contact_person_one_mobile_table_name = form.cleaned_data.get('contact_person_one_mobile_table_name').strip()
+            except:
+                pass
+            try:
+                contact_person_two_fullname_table_name = form.cleaned_data.get( 'contact_person_two_fullname_table_name').strip()
+            except:
+                pass
+            try:
+                contact_person_two_mobile_table_name = form.cleaned_data.get('contact_person_two_mobile_table_name').strip()
+            except:
+                pass
+            try:
+                contact_person_three_fullname_table_name = form.cleaned_data.get('contact_person_three_fullname_table_name').strip()
+            except:
+                pass
+            try:
+                contact_person_three_mobile_table_name = form.cleaned_data.get('contact_person_three_mobile_table_name').strip()
+            except:
+                pass
+
+            header_row_number = form.cleaned_data.get('header_row_number')
             excel_file = request.FILES['excel_file']
 
             # save the file to the assets folder
@@ -1795,10 +1850,28 @@ def importParent(request):
     if request.method == 'POST':
         form = ImportParentExcelForm(request.POST, request.FILES)
         if form.is_valid():
-            parent_fullname_table_name = form.cleaned_data.get('parent_fullname_table_name').strip()
-            parent_phone_number_table_name = form.cleaned_data.get('parent_phone_number_table_name').strip()
-            mobiletwo_table_name = form.cleaned_data.get('mobiletwo_table_name').strip()
-            header_row_number = form.cleaned_data.get('header_row_number').strip()
+
+            parent_fullname_table_name = None
+            parent_phone_number_table_name = None
+            mobiletwo_table_name = None
+            header_row_number = None
+
+            try:
+                parent_fullname_table_name = form.cleaned_data.get('parent_fullname_table_name').strip()
+            except:
+                pass
+            try:
+                parent_phone_number_table_name = form.cleaned_data.get('parent_phone_number_table_name').strip()
+            except:
+                pass
+            try:
+                mobiletwo_table_name = form.cleaned_data.get('mobiletwo_table_name').strip()
+            except:
+                pass
+            try:
+                header_row_number = form.cleaned_data.get('header_row_number')
+            except:
+                pass
             excel_file = request.FILES['excel_file']
 
             # save the file to the assets folder
