@@ -1391,6 +1391,7 @@ def tokenbuy(request, studentid, amount):
         print(mobile)
 
         if isEnoughToken:
+            print(f"Checking ------------- {myTokens(schoolid, amount)}")
             timestamp = time.time()
             gateway.stk_push_request(amount, mobile, studentid, appuser, purpose, timestamp)
 
@@ -1407,7 +1408,6 @@ def tokenbuy(request, studentid, amount):
                     return JsonResponse({'success': True})
 
             if not iscomplete:
-                messages.success(request, myTokens(schoolid, amount))
                 return JsonResponse({'success': False})
             return JsonResponse({'success': True})
 
