@@ -1407,6 +1407,7 @@ def tokenbuy(request, studentid, amount):
                     return JsonResponse({'success': True})
 
             if not iscomplete:
+                messages.success(request, myTokens(schoolid, amount))
                 return JsonResponse({'success': False})
             return JsonResponse({'success': True})
 
