@@ -1423,7 +1423,6 @@ def tokenbuy(request, studentid, amount):
 
         if isEnoughToken(schoolid, amount):
             print("Checkiing -> isEnoughToken")
-            print(f"Mother Fucker {myTokens(schoolid, amount)}")
             timestamp = time.time()
             gateway.stk_push_request(amount, mobile, studentid, appuser, purpose, timestamp)
 
