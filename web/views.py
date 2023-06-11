@@ -1396,6 +1396,8 @@ def tokenbuy(request, studentid, amount):
             logger = logging.getLogger(__name__)
             logger.setLevel(logging.INFO)
             logger.info(f"Checking ------------- {myTokens(schoolid, amount)}")
+            logger.info(f"Checking ------------- {myTokens(schoolid, amount)}")
+            logger.info(f"Checking ------------- {myTokens(schoolid, amount)}")
 
             messages.error(request, myTokens(schoolid, amount))
             return redirect('tokenpurchase', studentid=studentid, amount=amount)
