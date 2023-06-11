@@ -1394,6 +1394,7 @@ def tokenbuy(request, studentid, amount):
         if isEnoughToken:
             import logging
             logger = logging.getLogger(__name__)
+            logger.setLevel(logging.INFO)
             logger.info(f"Checking ------------- {myTokens(schoolid, amount)}")
 
             timestamp = time.time()
