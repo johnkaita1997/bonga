@@ -1363,7 +1363,6 @@ def tokenbuy(request, studentid, amount):
 
     schoolid = summarydictionary['school'].id
 
-
     student = Student.objects.get(id=studentid)
     summarydictionary['studentname'] = student.fullname
     summarydictionary['studentid'] = student.id
@@ -1412,7 +1411,8 @@ def tokenbuy(request, studentid, amount):
             return JsonResponse({'success': True})
 
         else:
-            return JsonResponse({'success': False})
+            messages.error(request, "School doesn't have enough tokens left!")
+            return redirect('tokenpurchase', studentid=studentid, amount=amount)
 
     else:
         print("It is not post")
