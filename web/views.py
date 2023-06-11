@@ -8,7 +8,6 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
-from django.db.models import Sum
 from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -19,7 +18,6 @@ from appuser.models import AppUser
 from constants.models import Constant
 from contact.api.serializer import ContactsWeberializer
 from contact.models import Contact
-from mobile.models import Mobile
 from payments.models import Transaction
 from payments.utils import mpesa
 from school.api.serializer import SchoolWebSerializer
@@ -29,7 +27,11 @@ from tespython import *
 from tokens.models import Token
 from web.forms import EditStudentForm, AddStudentForm, EditParentForm, AddParentForm, AddSchoolForm, EditSchoolForm, \
     EditMobileForm, EditAgentForm, AddAgentForm, EditSettingsForm, ImportStudentsExcelForm, ImportParentExcelForm, \
-    MinutesForm, DevicesForm
+    DevicesForm
+
+
+print(specificSchoolUnusedTokens(2))
+print(specificSchoolUsedTokens(2))
 
 
 def getDetails(request, user):
@@ -1345,6 +1347,9 @@ def tokenlist(request, studentid):
         return redirect('studentshomepage')
 
 
+
+
+
 @never_cache
 def tokenbuy(request, studentid, amount):
     gateway = mpesa.MpesaGateway()
@@ -1354,6 +1359,9 @@ def tokenbuy(request, studentid, amount):
         summarydictionary = getDetails(request, user)
     else:
         return redirect('loginpage')
+
+    schoolid = summarydictionary['school'].id
+
 
     student = Student.objects.get(id=studentid)
     summarydictionary['studentname'] = student.fullname
@@ -1380,30 +1388,31 @@ def tokenbuy(request, studentid, amount):
             mobile = transform_phone_number(thestring[start_index:end_index])
 
         print("Arrived here")
-        print("Arrived here")
-        print("Arrived here")
         print(mobile)
 
-        timestamp = time.time()
-        gateway.stk_push_request(amount, mobile, studentid, appuser, purpose, timestamp)
+        if isEnoughToken:
+            timestamp = time.time()
+            gateway.stk_push_request(amount, mobile, studentid, appuser, purpose, timestamp)
 
-        iscomplete = False
-        start_time = time.time()
-        while not iscomplete and time.time() - start_time < 60:
-            status = Transaction.objects.filter(timestamp=timestamp).get().status
-            print(f"Checking -- {status}")
-            if status == "CANCELLED" or status == "FAILED":
-                iscomplete = True
+            iscomplete = False
+            start_time = time.time()
+            while not iscomplete and time.time() - start_time < 60:
+                status = Transaction.objects.filter(timestamp=timestamp).get().status
+                print(f"Checking -- {status}")
+                if status == "CANCELLED" or status == "FAILED":
+                    iscomplete = True
+                    return JsonResponse({'success': False})
+                elif status == "COMPLETE":
+                    iscomplete = True
+                    return JsonResponse({'success': True})
+
+            if not iscomplete:
                 return JsonResponse({'success': False})
-            elif status == "COMPLETE":
-                iscomplete = True
-                return JsonResponse({'success': True})
+            return JsonResponse({'success': True})
 
-        if not iscomplete:
-            return JsonResponse({'success': False})
-
-        # return redirect('studentshomepage')
-        return JsonResponse({'success': True})
+        else:
+            messages.error(request, "School doesn't have enough tokens left!")
+            return redirect('tokenpurchase', studentid=studentid, amount=amount)
 
     else:
         print("It is not post")

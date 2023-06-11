@@ -100,12 +100,20 @@
         <!-- Divider -->
         <hr class="sidebar-divider">
 
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'adminhomepage' %}">
-                <i class="fas fa-fw fa-chart-area"></i>
-                <span>Dashboard</span></a>
-        </li>
+        {% if summary.isadmin %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'adminhomepage' %}">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span>Dashboard</span></a>
+            </li>
 
+        {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'agenthomepageminusid' %}">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span>Dashboard</span></a>
+            </li>
+        {% endif %}
 
         <li class="nav-item">
             <a class="nav-link" href="{% url 'adminschoolpage' %}">
@@ -135,6 +143,12 @@
             <a class="nav-link" href="">
                 <i class="fas fa-fw fa-table"></i>
                 <span>Settings</span></a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">
+                <i class="fas fa-fw fa-table"></i>
+                <span>Logout</span></a>
         </li>
 
         <br>
