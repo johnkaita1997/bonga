@@ -75,6 +75,7 @@
                                 </td>
                                 <td>
                                     <div align="center">
+
                                         {% if summary.istheadmin %}
 
                                             {% if valued.active == True %}
@@ -97,6 +98,11 @@
 
                                         {% else %}
                                             {% if valued.active == True %}
+                                                <a style="background: green; width: 160px"
+                                                   href="{% url 'tokenlist' studentid=valued.id %}"
+                                                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                                        class=""></i> Recharge Tokens </a>
+
                                                 <a style="background: green; width: 160px"
                                                    href=""
                                                    class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i

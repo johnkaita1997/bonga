@@ -31,10 +31,6 @@ from web.forms import EditStudentForm, AddStudentForm, EditParentForm, AddParent
     DevicesForm
 
 
-print(specificSchoolUnusedTokens(2))
-print(specificSchoolUsedTokens(2))
-
-
 def getDetails(request, user):
     summarydictionary = {}
 
@@ -143,6 +139,7 @@ def getDetails(request, user):
 
 @never_cache
 def agenthomepage(request, schoolid=None):
+    print(f"activityName: agenthomepage")
     if request.user.is_authenticated:
         print("User is authenticated")
         user = request.user
@@ -159,6 +156,7 @@ def agenthomepage(request, schoolid=None):
 
 @never_cache
 def studentshomepage(request):
+    print(f"activityName: studentshomepage")
     if request.user.is_authenticated:
         user = request.user
         summarydictionary = getDetails(request, user)
@@ -175,6 +173,7 @@ def studentshomepage(request):
 
 @never_cache
 def deletestudent(request, studentid):
+    print(f"activityName: deletestudent")
     if request.user.is_authenticated:
         student = Student.objects.get(id=studentid)
         student.delete()
@@ -188,6 +187,7 @@ def deletestudent(request, studentid):
 
 @never_cache
 def addStudent(request):
+    print(f"activityName: addStudent")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -267,6 +267,7 @@ def addStudent(request):
 
 
 def parentshomepage(request):
+    print(f"activityName: parentshomepage")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -293,6 +294,7 @@ def parentshomepage(request):
 
 @never_cache
 def editparent(request, parentid):
+    print(f"activityName: editparent")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -328,6 +330,7 @@ def editparent(request, parentid):
 
 @never_cache
 def deleteparent(request, parentid):
+    print(f"activityName: deleteparent")
     if request.user.is_authenticated:
         parent = Contact.objects.get(id=parentid)
         parent.delete()
@@ -341,6 +344,7 @@ def deleteparent(request, parentid):
 
 @never_cache
 def addparent(request):
+    print(f"activityName: addparent")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -408,6 +412,7 @@ def addparent(request):
 
 
 def transactionshomepage(request):
+    print(f"activityName: transactionshomepage")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -425,6 +430,7 @@ def transactionshomepage(request):
 # BEGINNING OF ADMIN
 @never_cache
 def adminstudentshomepage(request):
+    print(f"activityName: adminstudentshomepage")
     if request.user.is_authenticated:
         user = request.user
 
@@ -447,6 +453,7 @@ def adminstudentshomepage(request):
 
 @never_cache
 def deletestudent(request, studentid):
+    print(f"activityName: deletestudent")
     if request.user.is_authenticated:
         student = Student.objects.get(id=studentid)
         student.delete()
@@ -460,6 +467,7 @@ def deletestudent(request, studentid):
 
 @never_cache
 def editStudent(request, studentid):
+    print(f"activityName: editStudent")
     if request.user.is_authenticated:
         user = request.user
         summarydictionary = getDetails(request, user)
@@ -510,6 +518,7 @@ def editStudent(request, studentid):
 
 @never_cache
 def activateStudent(request, studentid):
+    print(f"activityName: activateStudent")
     if request.user.is_authenticated:
         user = request.user
 
@@ -581,6 +590,7 @@ def activateStudent(request, studentid):
 
 @never_cache
 def addStudent(request):
+    print(f"activityName: addStudent")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -676,6 +686,7 @@ def addStudent(request):
 
 @never_cache
 def editparent(request, parentid):
+    print(f"activityName: editparent")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -711,6 +722,7 @@ def editparent(request, parentid):
 
 @never_cache
 def deleteparent(request, parentid):
+    print(f"activityName: deleteparent")
     if request.user.is_authenticated:
         parent = Contact.objects.get(id=parentid)
         parent.delete()
@@ -724,6 +736,7 @@ def deleteparent(request, parentid):
 
 @never_cache
 def addparent(request):
+    print(f"activityName: addparent")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -789,6 +802,7 @@ def addparent(request):
 
 @never_cache
 def adminhomepage(request):
+    print(f"activityName: adminhomepage")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -839,6 +853,7 @@ def adminhomepage(request):
 
 @never_cache
 def adminschoolpage(request):
+    print(f"activityName: adminschoolpage")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -856,6 +871,7 @@ def adminschoolpage(request):
 
 @never_cache
 def editschool(request, schoolid):
+    print(f"activityName: editschool")
     school = School.objects.get(id=schoolid)
     if request.user.is_authenticated:
         user = request.user
@@ -894,6 +910,7 @@ def editschool(request, schoolid):
 
 @never_cache
 def deleteschool(request, schoolid):
+    print(f"activityName: deleteschool")
     if request.user.is_authenticated:
         school = School.objects.get(id=schoolid)
         school.delete()
@@ -907,6 +924,7 @@ def deleteschool(request, schoolid):
 
 @never_cache
 def addschool(request):
+    print(f"activityName: addschool")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -949,6 +967,7 @@ def addschool(request):
 
 @never_cache
 def viewschool(request, schoolid):
+    print(f"activityName: viewschool")
     print(f"SChool Id is {schoolid}")
     if request.user.is_authenticated:
         return redirect('agenthomepage', schoolid=schoolid)
@@ -958,6 +977,7 @@ def viewschool(request, schoolid):
 
 @never_cache
 def adminhomepage(request):
+    print(f"activityName: adminhomepage")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -1010,6 +1030,7 @@ def adminhomepage(request):
 
 @never_cache
 def admindevicepage(request):
+    print(f"activityName: admindevicepage")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -1026,6 +1047,7 @@ def admindevicepage(request):
 
 @never_cache
 def agentdevicepage(request):
+    print(f"activityName: agentdevicepage")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -1041,6 +1063,7 @@ def agentdevicepage(request):
 
 @never_cache
 def editdevice(request, mobileid):
+    print(f"activityName: editdevice")
     device = Mobile.objects.get(id=mobileid)
     if request.user.is_authenticated:
         user = request.user
@@ -1072,6 +1095,7 @@ def editdevice(request, mobileid):
 
 @never_cache
 def admintokenspage(request):
+    print(f"activityName: admintokenspage")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -1099,6 +1123,7 @@ def admintokenspage(request):
 
 @never_cache
 def adminagentspage(request):
+    print(f"activityName: adminagentspage")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -1114,6 +1139,7 @@ def adminagentspage(request):
 
 @never_cache
 def editagent(request, agentid):
+    print(f"activityName: editagent")
     agent = AppUser.objects.get(id=agentid)
     if request.user.is_authenticated:
         user = request.user
@@ -1150,6 +1176,7 @@ def editagent(request, agentid):
 
 @never_cache
 def deleteagent(request, agentid):
+    print(f"activityName: deleteagent")
     if request.user.is_authenticated:
         agent = AppUser.objects.get(id=agentid)
         agent.delete()
@@ -1160,6 +1187,7 @@ def deleteagent(request, agentid):
 
 @never_cache
 def addagent(request):
+    print(f"activityName: addagent")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -1224,6 +1252,7 @@ def addagent(request):
 
 @never_cache
 def logoutView(request):
+    print(f"activityName: logoutView")
     if request.user.is_authenticated:
         if 'globalschoolid' in globals():
             global globalschoolid
@@ -1234,6 +1263,7 @@ def logoutView(request):
 
 @never_cache
 def loginhomepage(request):
+    print(f"activityName: loginhomepage")
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
@@ -1268,6 +1298,7 @@ def loginhomepage(request):
 
 @never_cache
 def addtoken(request):
+    print(f"activityName: addtoken")
     if request.user.is_authenticated:
         user = request.user
         summarydictionary = getDetails(request, user)
@@ -1305,6 +1336,7 @@ def addtoken(request):
 
 @never_cache
 def deletetoken(request, tokenid):
+    print(f"activityName: deletetoken")
     if request.user.is_authenticated:
         getDetails(request, request.user)
         token = Token.objects.get(id=tokenid)
@@ -1316,6 +1348,7 @@ def deletetoken(request, tokenid):
 
 @never_cache
 def tokenlist(request, studentid):
+    print(f"activityName: tokenlist")
     if request.user.is_authenticated:
         user = request.user
         summarydictionary = getDetails(request, user)
@@ -1353,6 +1386,7 @@ def tokenlist(request, studentid):
 
 @never_cache
 def tokenbuy(request, studentid, amount):
+    print(f"activityName: tokenbuy")
     gateway = mpesa.MpesaGateway()
 
     if request.user.is_authenticated:
@@ -1387,7 +1421,9 @@ def tokenbuy(request, studentid, amount):
             end_index = start_index + 12
             mobile = transform_phone_number(thestring[start_index:end_index])
 
-        if isEnoughToken:
+        if isEnoughToken(schoolid, amount):
+            print("Checkiing -> isEnoughToken")
+            print(f"Mother Fucker {myTokens(schoolid, amount)}")
             timestamp = time.time()
             gateway.stk_push_request(amount, mobile, studentid, appuser, purpose, timestamp)
 
@@ -1408,8 +1444,9 @@ def tokenbuy(request, studentid, amount):
             return JsonResponse({'success': True})
 
         else:
+            print("Checkiing -> NOT ENOUGH TOKEN")
             messages.error(request, "School doesn't have enough tokens left!")
-            return redirect('tokenpurchase', studentid=studentid, amount=amount)
+            return JsonResponse({'success': False})
 
     else:
         print("It is not post")
@@ -1419,6 +1456,7 @@ def tokenbuy(request, studentid, amount):
 
 @never_cache
 def importStudent(request):
+    print(f"activityName: importStudent")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -1846,6 +1884,7 @@ def importStudent(request):
 
 @never_cache
 def importParent(request):
+    print(f"activityName: importParent")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -1991,6 +2030,7 @@ def importParent(request):
 
 @never_cache
 def adddevice(request):
+    print(f"activityName: adddevice")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -2041,6 +2081,7 @@ def adddevice(request):
 
 @never_cache
 def deleteDevice(request, mobileid):
+    print(f"activityName: deleteDevice")
     if request.user.is_authenticated:
         try:
             mobile = Mobile.objects.get(id=mobileid)
@@ -2057,6 +2098,7 @@ def deleteDevice(request, mobileid):
 
 @never_cache
 def schooldevices(request, schoolid):
+    print(f"activityName: schooldevices")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -2073,6 +2115,7 @@ def schooldevices(request, schoolid):
 
 @never_cache
 def agentschooldevices(request, schoolid):
+    print(f"activityName: agentschooldevices")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -2089,6 +2132,7 @@ def agentschooldevices(request, schoolid):
 
 @never_cache
 def addParentToStudent(request, studentid, parentid):
+    print(f"activityName: addParentToStudent")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -2111,6 +2155,7 @@ def addParentToStudent(request, studentid, parentid):
 
 @never_cache
 def removeParentFromStudent(request, studentid, parentid):
+    print(f"activityName: removeParentFromStudent")
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -2135,6 +2180,7 @@ def removeParentFromStudent(request, studentid, parentid):
 
 @never_cache
 def settingshomepage(request):
+    print(f"activityName: settingshomepage")
     if request.user.is_authenticated:
         user = request.user
         summarydictionary = getDetails(request, user)
@@ -2201,6 +2247,7 @@ def settingshomepage(request):
 
 @never_cache
 def addMinutesToDevice(request):
+    print(f"activityName: addMinutesToDevice")
     if request.user.is_authenticated:
         user = request.user
         summarydictionary = getDetails(request, user)

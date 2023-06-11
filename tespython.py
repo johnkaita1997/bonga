@@ -54,9 +54,18 @@ def specificSchoolUsedTokens(schoolid):
 def isEnoughToken(schoolid, amount):
     constant = Constant.objects.get(school_id=schoolid)
     shillingspertokenOrequivalentshillings = constant.shillingspertokenOrequivalentshillings
-    tokensBeingBought = amount / shillingspertokenOrequivalentshillings
+    tokensBeingBought = float(amount) / shillingspertokenOrequivalentshillings
     tokensLeft = specificSchoolUnusedTokens(schoolid)
+    print(f"A Checkiing {tokensBeingBought} against {tokensLeft}")
     if tokensBeingBought > tokensLeft:
+        print("Checkiing -> False")
         return False
     else:
+        print("Checkiing -> True")
         return True
+
+def myTokens(schoolid, amount):
+    constant = Constant.objects.get(school_id=schoolid)
+    shillingspertokenOrequivalentshillings = constant.shillingspertokenOrequivalentshillings
+    tokensBeingBought = float(amount) / shillingspertokenOrequivalentshillings
+    tokensLeft = specificSchoolUnusedTokens(schoolid)
