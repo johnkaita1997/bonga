@@ -43,9 +43,7 @@ def specificSchoolUnusedTokens(schoolid):
     schooldevices = Mobile.objects.filter(school_id=schoolid)
     sum_standingtoken = schooldevices.aggregate(total_standingtoken=Sum('standingtoken'))['total_standingtoken']
     unusedtokens = sum_standingtoken
-    sum_tokensconsumed = schooldevices.aggregate(total_tokensconsumed=Sum('tokensconsumed'))['total_tokensconsumed']
-    tokensconsumed = sum_tokensconsumed
-    return  sum_standingtoken
+    return  unusedtokens
 
 def specificSchoolUsedTokens(schoolid):
     schooldevices = Mobile.objects.filter(school_id=schoolid)

@@ -1387,9 +1387,6 @@ def tokenbuy(request, studentid, amount):
             end_index = start_index + 12
             mobile = transform_phone_number(thestring[start_index:end_index])
 
-        print("Arrived here")
-        print(mobile)
-
         if isEnoughToken:
             timestamp = time.time()
             gateway.stk_push_request(amount, mobile, studentid, appuser, purpose, timestamp)
