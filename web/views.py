@@ -1397,11 +1397,11 @@ def tokenbuy(request, studentid, amount):
             logger.setLevel(logging.INFO)
             logger.info(f"Checking ------------- {myTokens(schoolid, amount)}")
 
-            timestamp = time.time()
-            gateway.stk_push_request(amount, mobile, studentid, appuser, purpose, timestamp)
-
             messages.error(request, myTokens(schoolid, amount))
             return redirect('tokenpurchase', studentid=studentid, amount=amount)
+
+            # timestamp = time.time()
+            # gateway.stk_push_request(amount, mobile, studentid, appuser, purpose, timestamp)
 
             # iscomplete = False
             # start_time = time.time()
