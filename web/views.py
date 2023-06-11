@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import make_password
+from django.core.mail.backends import console
 from django.db import transaction
 from django.forms import model_to_dict
 from django.http import JsonResponse
@@ -1391,7 +1392,12 @@ def tokenbuy(request, studentid, amount):
         print(mobile)
 
         if isEnoughToken:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info(f"Checking ------------- {myTokens(schoolid, amount)}")
+
             print(f"Checking ------------- {myTokens(schoolid, amount)}")
+            console.log()
             timestamp = time.time()
             gateway.stk_push_request(amount, mobile, studentid, appuser, purpose, timestamp)
 
