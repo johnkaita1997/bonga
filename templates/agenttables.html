@@ -78,11 +78,6 @@
 
                                         {% if summary.istheadmin %}
 
-                                            <a style="background: green; width: 160px"
-                                                   href="{% url 'tokenlist' studentid=valued.id %}"
-                                                   class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                                        class=""></i> Recharge Tokens </a>
-
                                             {% if valued.active == True %}
                                                 <a style="background: green; width: 160px"
                                                    href="{% url 'tokenlist' studentid=valued.id %}"
