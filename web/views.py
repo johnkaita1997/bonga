@@ -1396,34 +1396,28 @@ def tokenbuy(request, studentid, amount):
             logger = logging.getLogger(__name__)
             logger.setLevel(logging.INFO)
             logger.info(f"Checking ------------- {myTokens(schoolid, amount)}")
-            logger.info(f"Checking ------------- {myTokens(schoolid, amount)}")
-            logger.info(f"Checking ------------- {myTokens(schoolid, amount)}")
 
-            messages.error(request, myTokens(schoolid, amount))
-            return redirect('tokenpurchase', studentid=studentid, amount=amount)
+            timestamp = time.time()
+            gateway.stk_push_request(amount, mobile, studentid, appuser, purpose, timestamp)
 
-            # timestamp = time.time()
-            # gateway.stk_push_request(amount, mobile, studentid, appuser, purpose, timestamp)
+            iscomplete = False
+            start_time = time.time()
+            while not iscomplete and time.time() - start_time < 60:
+                status = Transaction.objects.filter(timestamp=timestamp).get().status
+                print(f"Checking -- {status}")
+                if status == "CANCELLED" or status == "FAILED":
+                    iscomplete = True
+                    return JsonResponse({'success': False})
+                elif status == "COMPLETE":
+                    iscomplete = True
+                    return JsonResponse({'success': True})
 
-            # iscomplete = False
-            # start_time = time.time()
-            # while not iscomplete and time.time() - start_time < 60:
-            #     status = Transaction.objects.filter(timestamp=timestamp).get().status
-            #     print(f"Checking -- {status}")
-            #     if status == "CANCELLED" or status == "FAILED":
-            #         iscomplete = True
-            #         return JsonResponse({'success': False})
-            #     elif status == "COMPLETE":
-            #         iscomplete = True
-            #         return JsonResponse({'success': True})
-            #
-            # if not iscomplete:
-            #     return JsonResponse({'success': False})
-            # return JsonResponse({'success': True})
+            if not iscomplete:
+                return JsonResponse({'success': False})
+            return JsonResponse({'success': True})
 
         else:
-            messages.error(request, "School doesn't have enough tokens left!")
-            return redirect('tokenpurchase', studentid=studentid, amount=amount)
+            return JsonResponse({'success': False})
 
     else:
         print("It is not post")
