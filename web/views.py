@@ -1396,8 +1396,6 @@ def tokenbuy(request, studentid, amount):
             logger = logging.getLogger(__name__)
             logger.info(f"Checking ------------- {myTokens(schoolid, amount)}")
 
-            print(f"Checking ------------- {myTokens(schoolid, amount)}")
-            console.log()
             timestamp = time.time()
             gateway.stk_push_request(amount, mobile, studentid, appuser, purpose, timestamp)
 
