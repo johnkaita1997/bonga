@@ -1392,11 +1392,6 @@ def tokenbuy(request, studentid, amount):
         print(mobile)
 
         if isEnoughToken:
-            import logging
-            logger = logging.getLogger(__name__)
-            logger.setLevel(logging.INFO)
-            logger.info(f"Checking ------------- {myTokens(schoolid, amount)}")
-
             timestamp = time.time()
             gateway.stk_push_request(amount, mobile, studentid, appuser, purpose, timestamp)
 
