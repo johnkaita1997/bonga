@@ -72,7 +72,6 @@ class MobileDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         if 'standingminutes' in serializer.validated_data and 'standingtoken' in serializer.validated_data:
             try:
-
                 oldstandingminutes = instance.standingminutes
                 oldstandingtoken = instance.standingtoken
 
@@ -87,7 +86,6 @@ class MobileDetailView(generics.RetrieveUpdateDestroyAPIView):
 
             except ObjectDoesNotExist:
                 return Response({'details': "Constant Objects have not been saved"})
-
         else:
             return Response({'details': "Both New Minutes and Tokens required"})
 
