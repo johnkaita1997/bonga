@@ -1,8 +1,11 @@
 from rest_framework import generics
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from school.api.serializer import SchoolSerializer
 from school.models import School
+from tespython import specificSchoolUnusedTokens
+
 
 class SchoolCreateView(generics.CreateAPIView):
 
@@ -30,3 +33,11 @@ class SchoolListView(generics.ListAPIView):
 class SchoolDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
+
+
+
+
+class StandingTokenDetailView(APIView):
+    def get(self, request, pk):
+        unused = specificSchoolUnusedTokens(pk)
+        return Response(unused)

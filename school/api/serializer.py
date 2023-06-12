@@ -10,7 +10,6 @@ from student.models import Student
 class SchoolSerializer(serializers.ModelSerializer):
     students = serializers.PrimaryKeyRelatedField(queryset=School.objects.all(), many=True)
     agents = serializers.PrimaryKeyRelatedField(queryset=AppUser.objects.all(), many=True)
-
     class Meta:
         model = School
         fields = "__all__"
