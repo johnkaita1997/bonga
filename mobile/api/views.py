@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from constants.models import Constant
 from mobile.api.serializers import MobileSerializer
@@ -89,3 +90,10 @@ class MobileDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         else:
             return Response({'details': "Both New Minutes and Tokens required"})
+
+
+
+class MobileIdDetailView(APIView):
+    def get(self, request, pk):
+        mobile = Mobile.objects.get(mobile=pk)
+        return Response(str(mobile.id))
