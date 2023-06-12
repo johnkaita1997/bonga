@@ -9,5 +9,6 @@ urlpatterns = [
     path('create', SchoolCreateView.as_view(), name='school-create'),
     path('list', SchoolListView.as_view(), name="school-list"),
     path('<int:pk>', SchoolDetailView.as_view(), name="school-detail"),
+    # path('standingtoken/<int:pk>', StandingTokenDetailView.as_view(), name="myschool-detail"),
     path('standingtoken/<int:pk>', StandingTokenDetailView.as_view(), name="myschool-detail"),
 ]
