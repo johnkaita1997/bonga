@@ -65,4 +65,6 @@ urlpatterns = [
     path('settings', webviews.settingshomepage, name='settingshomepage'),
     path('addMinutesToDevice', webviews.addMinutesToDevice, name='addMinutesToDevice'),
 
+    path('global/edit', webviews.editGlobal, name='editGlobal'),
+
 ]

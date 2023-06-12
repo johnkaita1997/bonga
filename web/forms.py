@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.core.validators import MinValueValidator
 from django.db import IntegrityError
+from django.forms import models
 from django.forms.widgets import Select
 
 from appuser.models import AppUser
@@ -13,6 +14,7 @@ from school.models import School
 from mobile.models import SchoolWebCreate
 from student.models import Student
 from web.models import ImportStudentModel, ImportParentModel, MobileMinutes
+from django.db import models
 
 
 class AppUserBackend(ModelBackend):
@@ -266,5 +268,16 @@ class DevicesForm(forms.ModelForm):
         fields = ["active", "mobile", "school"]
 
 
+class GlobalSettingsModel(models.Model):
+    id = models.IntegerField(primary_key=True)
+    minimum_Student_Token_Balance_To_Make_Calls = models.FloatField(max_length=255, default=0.0, blank=True, null=True)
+    minimum_Overall_School_Minute_Balance_To_Allow_Calls = models.FloatField(max_length=255, default=0.0, blank=True, null=True)
+    minimum_Device_Token_Balance_To_Allow_Calls = models.FloatField(max_length=255, default=0.0, blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.minimum_Student_Token_Balance_To_Make_Calls}"
 
+class GlobalSettingsForm(forms.ModelForm):
+    class Meta:
+        model = GlobalSettingsModel
+        exclude = ['id']

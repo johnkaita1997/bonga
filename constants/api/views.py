@@ -2,8 +2,9 @@ from rest_framework import generics, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from constants.api.serializer import ConstantSerializer
+from constants.api.serializer import ConstantSerializer, GlobalSettingsSerializer
 from constants.models import Constant
+from web.forms import GlobalSettingsModel
 
 
 class ConstantCreateView(generics.CreateAPIView):
@@ -48,3 +49,11 @@ class ConstantListView(generics.ListAPIView):
 class ConstantDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Constant.objects.all()
     serializer_class = ConstantSerializer
+
+
+
+class GlobalSettingsListView(generics.ListAPIView):
+    serializer_class = GlobalSettingsSerializer
+    def get_queryset(self):
+        queryset = GlobalSettingsModel.objects.filter(id=0)
+        return queryset

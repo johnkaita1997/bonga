@@ -95,3 +95,13 @@ class MobileIdDetailView(APIView):
     def get(self, request, pk):
         mobile = Mobile.objects.get(mobile=pk)
         return Response(str(mobile.id))
+
+class MobileTokenMinutesBalance(APIView):
+    def get(self, request, pk):
+        mobile = Mobile.objects.get(mobile=pk)
+        standingtoken = mobile.standingtoken
+        standingminutes = mobile.standingminutes
+        data = {}
+        data['standingtoken'] = standingtoken
+        data['standingminutes'] = standingminutes
+        return Response(data)

@@ -8,7 +8,7 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import make_password
 from django.core.mail.backends import console
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -28,7 +28,7 @@ from tespython import *
 from tokens.models import Token
 from web.forms import EditStudentForm, AddStudentForm, EditParentForm, AddParentForm, AddSchoolForm, EditSchoolForm, \
     EditMobileForm, EditAgentForm, AddAgentForm, EditSettingsForm, ImportStudentsExcelForm, ImportParentExcelForm, \
-    DevicesForm
+    DevicesForm, GlobalSettingsForm, GlobalSettingsModel
 
 
 def getDetails(request, user):
@@ -2305,3 +2305,76 @@ def addMinutesToDevice(request):
                 return redirect('settingshomepage')
 
     return redirect('settingshomepage')
+
+
+@never_cache
+def editGlobal(request):
+    print(f"activityName: editGlobal")
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        return redirect('loginpage')
+
+    minimum_Student_Token_Balance_To_Make_Calls = 0.0
+    minimum_Overall_School_Minute_Balance_To_Allow_Calls = 0.0
+    minimum_Device_Token_Balance_To_Allow_Calls = 0.0
+
+    try:
+        oldglobal = GlobalSettingsModel.objects.get(id=0)
+        minimum_Student_Token_Balance_To_Make_Calls = oldglobal.minimum_Student_Token_Balance_To_Make_Calls
+        minimum_Overall_School_Minute_Balance_To_Allow_Calls = oldglobal.minimum_Overall_School_Minute_Balance_To_Allow_Calls
+        minimum_Device_Token_Balance_To_Allow_Calls = oldglobal.minimum_Device_Token_Balance_To_Allow_Calls
+    except:
+        pass
+
+    if request.method == 'POST':
+        form = GlobalSettingsForm(data=request.POST)
+
+        if form.is_valid():
+            minimum_Student_Token_Balance_To_Make_Calls = form.cleaned_data.get('minimum_Student_Token_Balance_To_Make_Calls')
+            minimum_Overall_School_Minute_Balance_To_Allow_Calls = transform_phone_number(form.cleaned_data.get('minimum_Overall_School_Minute_Balance_To_Allow_Calls'))
+            minimum_Device_Token_Balance_To_Allow_Calls = transform_phone_number(form.cleaned_data.get('minimum_Device_Token_Balance_To_Allow_Calls'))
+
+            try:
+                obj, created = GlobalSettingsModel.objects.get_or_create(
+                    id=0,  # Set the index to 0
+                    defaults={
+                        'minimum_Student_Token_Balance_To_Make_Calls': minimum_Student_Token_Balance_To_Make_Calls,
+                        'minimum_Overall_School_Minute_Balance_To_Allow_Calls': minimum_Overall_School_Minute_Balance_To_Allow_Calls,
+                        'minimum_Device_Token_Balance_To_Allow_Calls': minimum_Device_Token_Balance_To_Allow_Calls
+                    }
+                )
+
+                if created:
+                    messages.success(request, 'Settings Created Successfully!')
+
+                if not created:
+                    obj.minimum_Student_Token_Balance_To_Make_Calls = minimum_Student_Token_Balance_To_Make_Calls
+                    obj.minimum_Overall_School_Minute_Balance_To_Allow_Calls = minimum_Overall_School_Minute_Balance_To_Allow_Calls
+                    obj.minimum_Device_Token_Balance_To_Allow_Calls = minimum_Device_Token_Balance_To_Allow_Calls
+                    obj.save()
+                    messages.success(request, 'Settings Updated Successfully!')
+
+            except IntegrityError:
+                messages.error(request, 'An error occured!')
+                return redirect('editGlobal')
+            except Exception as exception:
+                messages.error(request, f'An error occured! {exception}')
+                return redirect('editGlobal')
+
+            return redirect('editGlobal')
+        else:
+            messages.error(request, 'Invalid entry')
+    else:
+        form = GlobalSettingsForm(
+            initial={
+                'minimum_Student_Token_Balance_To_Make_Calls': minimum_Student_Token_Balance_To_Make_Calls,
+                'minimum_Overall_School_Minute_Balance_To_Allow_Calls': minimum_Overall_School_Minute_Balance_To_Allow_Calls,
+                'minimum_Device_Token_Balance_To_Allow_Calls': minimum_Device_Token_Balance_To_Allow_Calls,
+            }
+        )
+
+    summarydictionary = getDetails(request, user)
+    summarydictionary['form'] = form
+    response = render(request, "editglobalsettings.html", {"summary": summarydictionary})
+    return response
