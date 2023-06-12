@@ -1,6 +1,7 @@
 from rest_framework.authtoken.views import ObtainAuthToken, obtain_auth_token
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from school.api.views import *
 
