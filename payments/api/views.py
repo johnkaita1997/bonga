@@ -41,7 +41,7 @@ class MpesaCheckoutView(generics.CreateAPIView):
             try:
                 self.perform_create(serializer)
             except Exception as exception:
-                return Response({"details": exception}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"details": str(exception)}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({"details": "Success: An Mpesa request has been sent to your mobile."}, status=status.HTTP_201_CREATED)
 
