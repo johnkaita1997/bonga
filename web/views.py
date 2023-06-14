@@ -534,7 +534,7 @@ def activateStudent(request, studentid):
         return redirect('loginpage')
 
     school = summarydictionary['school']
-    studentUser = Student.objects.get(id=studentid)
+    studentUser = Student.objects.get(id=studentid).user
     user = request.user
     app_user = AppUser.objects.get(id=user.id)
     app_user_mobile = app_user.phone
