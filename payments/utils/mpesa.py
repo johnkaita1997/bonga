@@ -144,7 +144,7 @@ class MpesaGateway:
                 print("HERE 2    " + str(res_data))
                 return Response({"details": f"Error: {str(res_data['errorMessage'])}"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            raise Exception(f"Error !   {e}")
+            raise Exception(f"Error!!   {e}")
 
 
 
