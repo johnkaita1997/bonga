@@ -766,6 +766,7 @@ def addparent(request):
                     isadmin=False,
                     isparent=True,
                     isagent=False,
+                    phone=mobile,
                     school=summarydictionary['school']
                 )
 
@@ -1758,6 +1759,7 @@ def importStudent(request):
                             isadmin=False,
                             isparent=True,
                             isagent=False,
+                            phone = transform_phone_number(parent_phone_number),
                             school=summarydictionary['school'],
                         )
 
@@ -1787,6 +1789,7 @@ def importStudent(request):
                             isadmin=False,
                             isparent=True,
                             isagent=False,
+                            phone=transform_phone_number(contact_person_one_mobile),
                             school=summarydictionary['school'])
                         try:
                             guardianuser = AppUser.objects.get(email=contactuserone.email)
@@ -1813,6 +1816,7 @@ def importStudent(request):
                             isstudent=False,
                             isadmin=False,
                             isparent=True,
+                            phone=transform_phone_number(contact_person_two_mobile),
                             isagent=False,
                             school=summarydictionary['school'],
                         )
@@ -1843,6 +1847,7 @@ def importStudent(request):
                             isadmin=False,
                             isparent=True,
                             isagent=False,
+                            phone=transform_phone_number(contact_person_three_mobile),
                             school=summarydictionary['school'],
                         )
                         try:

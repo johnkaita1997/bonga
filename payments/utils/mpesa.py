@@ -6,7 +6,7 @@ from datetime import datetime
 import requests
 from phonenumber_field.phonenumber import PhoneNumber
 from requests.auth import HTTPBasicAuth
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.response import Response
 
 from constants.models import Constant
@@ -142,7 +142,7 @@ class MpesaGateway:
 
             else:
                 print("HERE 2    " + str(res_data))
-                raise Exception(f"Error !   {str(res_data)}")
+                return Response({"details": f"Error: {str(res_data['errorMessage'])}"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             raise Exception(f"Error !   {e}")
 
