@@ -57,11 +57,11 @@ class MpesaCheckoutView(generics.CreateAPIView):
         try:
             resp = gateway.stk_push_request(amount, mobile, studentid, user, purpose, timestamp)
         except Exception as exception:
-            return Response({"details": exception}, status=status.HTTP_200_OK)
+            return Response({"details": exception}, status=status.HTTP_400_BAD_REQUEST)
 
         if not resp:
             return Response({"details": "Error: Payment request failed. Try again later."}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"details": resp}, status=status.HTTP_200_OK)
+        return Response({"details": resp}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
