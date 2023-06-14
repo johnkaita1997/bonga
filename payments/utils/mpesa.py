@@ -144,7 +144,7 @@ class MpesaGateway:
                 print("HERE 2    " + str(res_data))
                 raise Exception(f"{str(res_data['errorMessage'])}")
         except Exception as e:
-            raise Exception(f"{e}")
+            return str(e)  # Return the exception message as a string
 
 
 
