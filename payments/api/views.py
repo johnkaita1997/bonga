@@ -54,7 +54,10 @@ class MpesaCheckoutView(generics.CreateAPIView):
         user = AppUser.objects.get(id=loggedinuser)
         serializer.validated_data['user'] = user
 
-        resp = gateway.stk_push_request(amount, mobile, studentid, user, purpose, timestamp)
+        try:
+            resp = gateway.stk_push_request(amount, mobile, studentid, user, purpose, timestamp)
+        except Exception as exception:
+            return Response({"details": exception}, status=status.HTTP_200_OK)
 
         if not resp:
             return Response({"details": "Error: Payment request failed. Try again later."}, status=status.HTTP_400_BAD_REQUEST)
