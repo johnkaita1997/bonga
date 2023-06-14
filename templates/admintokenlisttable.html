@@ -81,7 +81,7 @@
                                 <td>{{ valued.equivalentshillings }}</td>
                                 <td style="width: 13.33%">
                                     <div style="display: flex; justify-content: center;">
-                                        <a href="{% url 'tokenpurchase' studentid=summary.studentid amount=valued.equivalentshillings %}"
+                                        <a href="{% url 'tokenpurchase' studentid=summary.studentid amount=valued.equivalentshillings tokens=valued.tokenamount %}"
                                            style="padding: 10px; color: white; background-color: {{ summary.color }}; width: 150px; text-align: center; text-decoration: none; border-radius: 5px;">
                                             Select Token
                                         </a>

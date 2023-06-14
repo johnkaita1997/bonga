@@ -534,16 +534,17 @@ def activateStudent(request, studentid):
         return redirect('loginpage')
 
     school = summarydictionary['school']
-    student = Student.objects.get(id=studentid)
+    studentUser = Student.objects.get(id=studentid)
     user = request.user
     app_user = AppUser.objects.get(id=user.id)
     app_user_mobile = app_user.phone
+
     activationFee = Constant.objects.get(school = school).activationamount
     gateway = mpesa.MpesaGateway()
 
     summarydictionary['activationfee'] = activationFee
-    summarydictionary['student'] = student
-    summarydictionary['studentname'] = student.fullname
+    summarydictionary['student'] = studentUser
+    summarydictionary['studentname'] = studentUser.fullname
     summarydictionary['mobile'] = app_user_mobile
 
     if request.method == 'POST':
@@ -564,7 +565,7 @@ def activateStudent(request, studentid):
         print(mobile)
 
         timestamp = time.time()
-        gateway.stk_push_request(activationFee, mobile, studentid, app_user, "REGISTRATION", timestamp)
+        gateway.stk_push_request(activationFee, mobile, studentid, studentUser, "REGISTRATION", timestamp)
 
         iscomplete = False
         start_time = time.time()
@@ -1386,7 +1387,7 @@ def tokenlist(request, studentid):
 
 
 @never_cache
-def tokenbuy(request, studentid, amount):
+def tokenbuy(request, studentid, amount, tokens):
     print(f"activityName: tokenbuy")
     gateway = mpesa.MpesaGateway()
 
@@ -1402,9 +1403,12 @@ def tokenbuy(request, studentid, amount):
     summarydictionary['studentname'] = student.fullname
     summarydictionary['studentid'] = student.id
     summarydictionary['amount'] = amount
+    summarydictionary['tokens'] = tokens
 
-    appuser = AppUser.objects.get(id=request.user.id)
-    mobile = appuser.phone
+    loggedinuser = AppUser.objects.get(id = request.user.id)
+    studentUser = Student.objects.get(id=studentid).user
+
+    mobile = loggedinuser.phone
     summarydictionary['mobile'] = mobile
     purpose = "TOKEN"
 
@@ -1425,7 +1429,7 @@ def tokenbuy(request, studentid, amount):
         if isEnoughToken(schoolid, amount):
             print("Checkiing -> isEnoughToken")
             timestamp = time.time()
-            gateway.stk_push_request(amount, mobile, studentid, appuser, purpose, timestamp)
+            gateway.stk_push_request(amount, mobile, studentid, studentUser, purpose, timestamp)
 
             iscomplete = False
             start_time = time.time()

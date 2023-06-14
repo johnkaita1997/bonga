@@ -198,7 +198,6 @@ class MpesaGateway:
                 shillingspertokenOrequivalentshillings = Constant.objects.get(school=student.school).shillingspertokenOrequivalentshillings
                 # SUBTRACT TOKENS AND MINUTES FROM USER
 
-
                 student.tokenbalance = student.tokenbalance + (userpaid / shillingspertokenOrequivalentshillings)
                 print(f"Student token balance is {student.tokenbalance} and userpaid {userpaid}  and shillings per token is {shillingspertokenOrequivalentshillings} so new token is {student.tokenbalance + (userpaid / shillingspertokenOrequivalentshillings)}")
                 student = transaction.student
@@ -207,13 +206,13 @@ class MpesaGateway:
                 school = student.school
 
                 listOfMobiles = Mobile.objects.filter(school = school)
-                length = len(listOfMobiles)
-                eachMobileToBeDeducted = userpaid / length
-                convertAmountToToken = eachMobileToBeDeducted / shillingspertokenOrequivalentshillings
+                numberOfPhones = len(listOfMobiles)
+                shillingsPaidPerMobile = userpaid / numberOfPhones
+                tokensToBeDeductedPerMobile = shillingsPaidPerMobile / shillingspertokenOrequivalentshillings
 
                 for mobile in listOfMobiles:
-                    mobile.standingtoken -= convertAmountToToken
-                    mobile.standingminutes -= (userpaid * minutespershilling)
+                    mobile.standingtoken -= tokensToBeDeductedPerMobile
+                    mobile.standingminutes -= (shillingsPaidPerMobile * minutespershilling)
                     mobile.save()
                     print(f"ALSO FOUND {student.fullname} - {school.name} - {mobile}")
 
@@ -234,7 +233,6 @@ class MpesaGateway:
             transaction.mobile = PhoneNumber(raw_input=phone_number)
             transaction.receiptnumber = receiptnumber
             transaction.status = "COMPLETE"
-
 
 
         elif status == 1032:

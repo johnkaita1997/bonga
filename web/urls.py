@@ -55,7 +55,7 @@ urlpatterns = [
     path('tokens/addtoken', webviews.addtoken, name='addtoken'),
     path('tokens/delete/<str:tokenid>', webviews.deletetoken, name='deletetoken'),
     path('tokens/list/<str:studentid>', webviews.tokenlist, name='tokenlist'),
-    path('tokens/purchase/<str:studentid>/<str:amount>/', webviews.tokenbuy, name='tokenpurchase'),
+    path('tokens/purchase/<str:studentid>/<str:amount>/<str:tokens>/', webviews.tokenbuy, name='tokenpurchase'),
 
     path('agents', webviews.adminagentspage, name='adminagentspage'),
     path('agents/add', webviews.addagent, name='addagent'),

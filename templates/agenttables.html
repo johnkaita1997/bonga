@@ -76,6 +76,12 @@
                                 <td>
                                     <div align="center">
 
+                                        <a style="background: green; width: 160px"
+                                           href="{% url 'tokenlist' studentid=valued.id %}"
+                                           class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                                class=""></i> Recharge Tokens </a>
+
+
                                         {% if summary.istheadmin %}
 
                                             {% if valued.active == True %}
@@ -115,7 +121,7 @@
                                             {% endif %}
                                         {% endif %}
 
-                                    
+
                                     </div>
 
                                     <br>

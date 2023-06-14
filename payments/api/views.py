@@ -8,6 +8,7 @@ from appuser.models import AppUser
 from payments.api.serializers import MpesaCheckoutSerializer
 from payments.models import Transaction
 from payments.utils import mpesa
+from student.models import Student
 
 gateway = mpesa.MpesaGateway()
 
@@ -55,12 +56,11 @@ class MpesaCheckoutView(generics.CreateAPIView):
         amount = serializer.validated_data['amount']
         purpose = serializer.validated_data['purpose']
         timestamp = serializer.validated_data['timestamp']
-
         loggedinuser = self.request.user.id
-        user = AppUser.objects.get(id=loggedinuser)
-        serializer.validated_data['user'] = user
+        studentUser = Student.objects.get(id = studentid).user
+        serializer.validated_data['user'] = studentUser
 
-        gateway.stk_push_request(amount, mobile, studentid, user, purpose, timestamp)
+        gateway.stk_push_request(amount, mobile, studentid, studentUser, purpose, timestamp)
 
 
 
