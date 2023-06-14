@@ -37,8 +37,14 @@ class MpesaCheckoutView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            self.perform_create(serializer)
-            return Response({"details": "Success: An Mpesa request has been sent to your mobile."}, status=status.HTTP_201_CREATED)
+
+            try:
+                self.perform_create(serializer)
+            except Exception as exception:
+                Response({"details": exception}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"details": "Success: An Mpesa request has been sent to your mobile."}, status=status.HTTP_201_CREATED)
+
         else:
             errors = serializer.errors
             return Response({"details": errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -54,16 +60,7 @@ class MpesaCheckoutView(generics.CreateAPIView):
         user = AppUser.objects.get(id=loggedinuser)
         serializer.validated_data['user'] = user
 
-        try:
-            resp = gateway.stk_push_request(amount, mobile, studentid, user, purpose, timestamp)
-        except Exception as exception:
-            return Response({"details": exception}, status=status.HTTP_400_BAD_REQUEST)
-
-        if not resp:
-            return Response({"details": "Error: Payment request failed. Try again later."}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"details": resp}, status=status.HTTP_400_BAD_REQUEST)
-
-
+        gateway.stk_push_request(amount, mobile, studentid, user, purpose, timestamp)
 
 
 
