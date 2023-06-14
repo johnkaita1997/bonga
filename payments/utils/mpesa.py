@@ -118,7 +118,6 @@ class MpesaGateway:
             print("HERE 1    " + str(res_data))
 
             if res.ok:
-
                 student = None
                 if  Student.objects.get(id = studentid):
                     student = Student.objects.get(id = studentid)
@@ -142,7 +141,7 @@ class MpesaGateway:
 
             else:
                 print("HERE 2    " + str(res_data))
-                raise Exception(f"{str(res_data['errorMessage'])}")
+                raise serializers.ValidationError(f"{str(res_data['errorMessage'])}")
         except Exception as e:
             return str(e)  # Return the exception message as a string
 
