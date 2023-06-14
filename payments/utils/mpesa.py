@@ -141,9 +141,9 @@ class MpesaGateway:
 
             else:
                 print("HERE 2    " + str(res_data))
-                raise serializers.ValidationError(f"{str(res_data['errorDetail'])}")
+                raise Exception(f"{str(res_data['errorMessage'])}")
         except Exception as e:
-            raise serializers.ValidationError(e)
+            raise Exception(e)
 
 
 
