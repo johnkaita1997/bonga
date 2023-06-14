@@ -534,6 +534,8 @@ def activateStudent(request, studentid):
         return redirect('loginpage')
 
     school = summarydictionary['school']
+    print(f"Student id is {studentid}")
+    student = Student.objects.get(id=studentid)
     studentUser = Student.objects.get(id=studentid).user
     user = request.user
     app_user = AppUser.objects.get(id=user.id)
@@ -543,8 +545,8 @@ def activateStudent(request, studentid):
     gateway = mpesa.MpesaGateway()
 
     summarydictionary['activationfee'] = activationFee
-    summarydictionary['student'] = studentUser
-    summarydictionary['studentname'] = studentUser.fullname
+    summarydictionary['student'] = student
+    summarydictionary['studentname'] = student.fullname
     summarydictionary['mobile'] = app_user_mobile
 
     if request.method == 'POST':
