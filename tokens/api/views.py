@@ -33,7 +33,7 @@ class TokenCreateView(generics.CreateAPIView):
 
 class TokenListView(generics.ListAPIView):
     serializer_class = TokenSerializer
-
     def get_queryset(self):
-        queryset = Token.objects.all()
+        pk = self.kwargs.get('pk')
+        queryset = Token.objects.filter(school_id=pk)
         return queryset
