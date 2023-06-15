@@ -1920,6 +1920,7 @@ def importParent(request):
             parent_phone_number_table_name = None
             mobiletwo_table_name = None
             header_row_number = None
+            print("Here")
 
             try:
                 parent_fullname_table_name = form.cleaned_data.get('parent_fullname_table_name').strip()
