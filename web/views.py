@@ -1996,7 +1996,7 @@ def importParent(request):
 
                 newParent = Contact()
 
-                if parent_phone_number:
+                if parent_phone_number and parent_phone_number != None and parent_phone_number != "":
                     newParent.mobile = parent_phone_number
                     newParent.relationship = "PARENT"
 
