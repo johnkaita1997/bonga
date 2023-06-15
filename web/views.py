@@ -2024,6 +2024,7 @@ def importParent(request):
 
                     try:
                         parentUser = AppUser.objects.get(email=parentUser.email)
+                        newParent.contactuser = parentUser
                     except AppUser.DoesNotExist:
                         parentUser.save()
                         newParent.contactuser = parentUser
