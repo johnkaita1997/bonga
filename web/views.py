@@ -2029,12 +2029,12 @@ def importParent(request):
                         parentUser.save()
                         newParent.contactuser = parentUser
 
-                try:
-                    newParent.save()
-                except:
-                    pass
-                else:
-                    pass
+                    try:
+                        newParent.save()
+                    except:
+                        pass
+                    else:
+                        pass
 
             return JsonResponse({'success': True})
 
