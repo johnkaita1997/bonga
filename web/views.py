@@ -1714,7 +1714,7 @@ def importStudent(request):
                 else:
                     pass
 
-                if student_admission_number:
+                if student_admission_number and student_admission_number is not None and student_admission_number != "" and student_admission_number != "None":
                     newStudent.registrationnumber = student_admission_number
                     newStudent.email = f"{student_admission_number}@gmail.com"
                     newStudent.username = f"{student_admission_number}@gmail.com"
@@ -1751,7 +1751,7 @@ def importStudent(request):
 
                 if parent_fullname:
                     contactuserparent.name = parent_fullname
-                    if parent_phone_number:
+                    if parent_phone_number and parent_phone_number is not None and parent_phone_number != "" and parent_phone_number != "None":
                         contactuserparent.mobile = parent_phone_number
                         contactuserparent.relationship = "PARENT"
                         contactuserparent.email = f"{contactuserparent.mobile}@gmail.com"
@@ -1782,9 +1782,9 @@ def importStudent(request):
                         pass
 
                 contactuserone = Contact()
-                if contact_person_one_fullname:
+                if contact_person_one_fullname and contact_person_one_fullname is not None and contact_person_one_fullname != "" and contact_person_one_fullname != "None":
                     contactuserone.name = contact_person_one_fullname
-                    if contact_person_one_mobile:
+                    if contact_person_one_mobile :
                         contactuserone.mobile = contact_person_one_mobile
                         contactuserone.relationship = "GUARDIAN"
                         contactuserone.email = f"{contactuserone.mobile}@gmail.com"
@@ -1812,7 +1812,7 @@ def importStudent(request):
                         pass
 
                 contactuserTwo = Contact()
-                if contact_person_two_fullname:
+                if contact_person_two_fullname and contact_person_two_fullname is not None and contact_person_two_fullname != "" and contact_person_two_fullname != "None":
                     contactuserTwo.name = contact_person_two_fullname
                     if contact_person_two_mobile:
                         contactuserTwo.mobile = contact_person_two_mobile
@@ -1846,7 +1846,7 @@ def importStudent(request):
                 contactuserThree = Contact()
                 if contact_person_three_fullname:
                     contactuserThree.name = contact_person_three_fullname
-                    if contact_person_three_mobile:
+                    if contact_person_three_mobile  and contact_person_three_mobile is not None and contact_person_three_mobile != "" and contact_person_three_mobile != "None" :
                         contactuserThree.mobile = contact_person_three_mobile
                         contactuserThree.relationship = "GUARDIAN"
                         contactuserThree.email = f"{contactuserThree.mobile}@gmail.com"
@@ -1996,8 +1996,8 @@ def importParent(request):
 
                 newParent = Contact()
 
-                if parent_phone_number and parent_phone_number != None and parent_phone_number != "":
-                    print("Here")
+                if parent_phone_number != "None" and parent_phone_number is not None and parent_phone_number != "":
+                    print(f"Here at {parent_phone_number} - {parent_fullname} - Row Number : ${row}")
                     newParent.mobile = parent_phone_number
                     newParent.relationship = "PARENT"
 
