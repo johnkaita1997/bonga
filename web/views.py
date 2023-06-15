@@ -1736,6 +1736,7 @@ def importStudent(request):
                     )
                     try:
                         studentntUser = AppUser.objects.get(email=newStudent.email)
+                        newStudent.user = studentntUser
                     except AppUser.DoesNotExist:
                         studentntUser.save()
                         newStudent.user = studentntUser
@@ -1884,6 +1885,7 @@ def importStudent(request):
                         newStudent.contacts.add(contactuserTwo)
                     if hasattr(contactuserThree, 'id'):
                         newStudent.contacts.add(contactuserThree)
+                    newStudent.save()
                 except:
                     pass
 
