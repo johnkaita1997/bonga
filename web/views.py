@@ -756,14 +756,13 @@ def addparent(request):
                 mobiletwo = transform_phone_number(form.cleaned_data.get('mobiletwo'))
                 email = form.cleaned_data.get('email').strip()
 
-                email = email
-
+                email = f"{mobile}@gmail.com"
                 # Create a new AppUser instance
                 user = AppUser(
                     email=email,
                     username=email,
-                    password=make_password(email),
-                    confirmpassword=make_password(email),
+                    password=make_password(mobile),
+                    confirmpassword=make_password(mobile),
                     fullname=name,
                     isstudent=True,
                     isadmin=False,
