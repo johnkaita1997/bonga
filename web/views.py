@@ -1771,6 +1771,8 @@ def importStudent(request):
 
                         try:
                             parentuser = AppUser.objects.get(email=contactuserparent.email)
+                            contactuserparent.contactuser = parentuser
+                            contactuserparent.save()
                         except AppUser.DoesNotExist:
                             parentuser.save()
                             contactuserparent.contactuser = parentuser
@@ -1799,6 +1801,8 @@ def importStudent(request):
                             school=summarydictionary['school'])
                         try:
                             guardianuser = AppUser.objects.get(email=contactuserone.email)
+                            contactuserone.contactuser = guardianuser
+                            contactuserone.save()
                         except AppUser.DoesNotExist:
                             guardianuser.save()
                             contactuserone.contactuser = guardianuser
@@ -1828,6 +1832,8 @@ def importStudent(request):
                         )
                         try:
                             guardianuser = AppUser.objects.get(email=contactuserTwo.email)
+                            contactuserTwo.contactuser = guardianuser
+                            contactuserTwo.save()
                         except AppUser.DoesNotExist:
                             guardianuser.save()
                             contactuserTwo.contactuser = guardianuser
@@ -1858,6 +1864,8 @@ def importStudent(request):
                         )
                         try:
                             guardianuser = AppUser.objects.get(email=contactuserThree.email)
+                            contactuserThree.contactuser = guardianuser
+                            contactuserThree.save()
                         except AppUser.DoesNotExist:
                             guardianuser.save()
                             contactuserThree.contactuser = guardianuser
