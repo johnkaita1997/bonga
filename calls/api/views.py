@@ -22,9 +22,9 @@ class CallsCreateView(generics.CreateAPIView):
         mobilecalled = serializer.validated_data['mobilecalled']
         self.perform_create(serializer)
 
-        if Mobile.objects.filter(mobile=mobilecalled).first():
-            print(f"Mobile Found For Mobile {mobilecalled}")
-            mobileObj = Mobile.objects.get(mobile=mobilecalled)
+        if Mobile.objects.filter(mobile=mobileused).first():
+            print(f"Mobile Found For Mobile {mobileused}")
+            mobileObj = Mobile.objects.get(mobile=mobileused)
             mobileObj.standingtoken = mobileObj.standingtoken - tokensused
             mobileObj.standingminutes = mobileObj.standingminutes - minutesused
             mobileObj.tokensconsumed = mobileObj.tokensconsumed + tokensused
