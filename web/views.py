@@ -1286,9 +1286,11 @@ def loginhomepage(request):
     else:
         if request.method == 'POST':
             form = AuthenticationForm(data=request.POST)
+            username = f"{request.POST.get('username').strip()}@gmail.com"
+            mutable_data = request.POST.copy()
+            mutable_data['username'] = username
+            form = AuthenticationForm(data=mutable_data)
             if form.is_valid():
-                # Authenticate the user
-                username = f"{form.cleaned_data.get('username').strip()}@gmail.com"
                 password = form.cleaned_data.get('password').strip()
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
@@ -1304,6 +1306,7 @@ def loginhomepage(request):
                         print(f"User is neither admin nor agent {appuser}")
             else:
                 messages.error(request, 'Invalid username or password')
+                summarydictionary['form'] = form
         else:
             form = AuthenticationForm()
             summarydictionary['form'] = form
