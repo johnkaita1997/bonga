@@ -1267,34 +1267,46 @@ def logoutView(request):
 @never_cache
 def loginhomepage(request):
     print(f"activityName: loginhomepage")
-    if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            # Authenticate the user
-            username = form.cleaned_data.get('username').strip()
-            password = form.cleaned_data.get('password').strip()
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                appuser = AppUser.objects.get(id=user.id)
-                print(appuser)
-                global istheadmin
-
-                if appuser.isadmin:
-                    istheadmin = True
-                    return redirect('adminhomepage')
-                elif appuser.isagent:
-                    istheadmin = False
-                    return redirect('agenthomepageminusid')
-                else:
-                    print("User is neither admin nor agent")
-        else:
-            messages.error(request, 'Invalid username or password')
-    else:
-        form = AuthenticationForm()
-
     summarydictionary = {}
-    summarydictionary['form'] = form
+    global istheadmin
+
+    if request.user.is_authenticated:
+        userid = request.user.id
+        appuser = AppUser.objects.get(id=userid)
+        print(f"UserID is {appuser}")
+        summarydictionary = getDetails(request, appuser)
+        if appuser.isadmin:
+            istheadmin = True
+            return redirect('adminhomepage')
+        elif appuser.isagent:
+            istheadmin = False
+            return redirect('agenthomepageminusid')
+        else:
+            print(f"User is neither admin nor agent {appuser}")
+    else:
+        if request.method == 'POST':
+            form = AuthenticationForm(data=request.POST)
+            if form.is_valid():
+                # Authenticate the user
+                username = f"{form.cleaned_data.get('username').strip()}@gmail.com"
+                password = form.cleaned_data.get('password').strip()
+                user = authenticate(request, username=username, password=password)
+                if user is not None:
+                    login(request, user)
+                    appuser = AppUser.objects.get(id=user.id)
+                    if appuser.isadmin:
+                        istheadmin = True
+                        return redirect('adminhomepage')
+                    elif appuser.isagent:
+                        istheadmin = False
+                        return redirect('agenthomepageminusid')
+                    else:
+                        print(f"User is neither admin nor agent {appuser}")
+            else:
+                messages.error(request, 'Invalid username or password')
+        else:
+            form = AuthenticationForm()
+            summarydictionary['form'] = form
     response = render(request, "login.html", {"summary": summarydictionary})
     return response
 
