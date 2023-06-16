@@ -1286,12 +1286,14 @@ def loginhomepage(request):
     else:
         if request.method == 'POST':
             form = AuthenticationForm(data=request.POST)
-            username = f"{request.POST.get('username').strip()}@gmail.com"
-            mutable_data = request.POST.copy()
-            mutable_data['username'] = username
-            form = AuthenticationForm(data=mutable_data)
             if form.is_valid():
+                username = form.cleaned_data.get('username').strip()
+                if username.startswith('0'):
+                    username = '254' + username[1:]
                 password = form.cleaned_data.get('password').strip()
+                if password.startswith('0'):
+                    password = '254' + password[1:]
+                print(username, password)
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
                     login(request, user)
