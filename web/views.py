@@ -28,7 +28,7 @@ from tespython import *
 from tokens.models import Token
 from web.forms import EditStudentForm, AddStudentForm, EditParentForm, AddParentForm, AddSchoolForm, EditSchoolForm, \
     EditMobileForm, EditAgentForm, AddAgentForm, EditSettingsForm, ImportStudentsExcelForm, ImportParentExcelForm, \
-    DevicesForm, GlobalSettingsForm, GlobalSettingsModel
+    DevicesForm, GlobalSettingsForm, GlobalSettingsModel, LoginForm
 
 
 def getDetails(request, user):
@@ -1285,11 +1285,12 @@ def loginhomepage(request):
             print(f"User is neither admin nor agent {appuser}")
     else:
         if request.method == 'POST':
-            form = AuthenticationForm(data=request.POST)
+            form = LoginForm(data=request.POST)
             if form.is_valid():
                 username = form.cleaned_data.get('username').strip()
                 if username.startswith('0'):
                     username = '254' + username[1:]
+                username += "@gmail.com"
                 password = form.cleaned_data.get('password').strip()
                 if password.startswith('0'):
                     password = '254' + password[1:]
@@ -1305,12 +1306,21 @@ def loginhomepage(request):
                         istheadmin = False
                         return redirect('agenthomepageminusid')
                     else:
-                        print(f"User is neither admin nor agent {appuser}")
+                        form = LoginForm()
+                        summarydictionary['form'] = form
+                        messages.error(request, f"User is neither admin nor agent {appuser}")
+                        return redirect('loginpage')
+                else:
+                    form = LoginForm()
+                    summarydictionary['form'] = form
+                    messages.error(request, 'Invalid username or password')
+
             else:
-                messages.error(request, 'Invalid username or password')
+                messages.error(request, 'Invalid Form')
                 summarydictionary['form'] = form
+                return redirect('loginpage')
         else:
-            form = AuthenticationForm()
+            form = LoginForm()
             summarydictionary['form'] = form
     response = render(request, "login.html", {"summary": summarydictionary})
     return response

@@ -51,7 +51,9 @@ class EditParentForm(forms.ModelForm):
             'name',
             'mobiletwo',
         )
-
+    def __init__(self, *args, **kwargs):
+        super(EditParentForm, self).__init__(*args, **kwargs)
+        self.fields['mobile'].widget.attrs['readonly'] = True
 
 
 
@@ -59,21 +61,14 @@ class EditParentForm(forms.ModelForm):
 class EditStudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        exclude = (
-            'active',
-            'activefromdate',
-            'registrationnumber',
+        fields = (
+            'fullname',
+            'kcpeindexnumber',
             'phonenumber',
-            'password',
-            'confirmpassword',
-            'tokenbalance',
-            'totalnumberofcalls',
-            'username',
-            'email',
-            'school',
-            'user',
-            'contacts'
         )
+    def __init__(self, *args, **kwargs):
+        super(EditStudentForm, self).__init__(*args, **kwargs)
+        self.fields['phonenumber'].widget.attrs['readonly'] = True
 
 
 
@@ -281,3 +276,16 @@ class GlobalSettingsForm(forms.ModelForm):
     class Meta:
         model = GlobalSettingsModel
         exclude = ['id']
+
+
+
+# Create your models here.
+class LoginModel(models.Model):
+    username = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
+    def __str__(self):
+        return f"${self.username}-{self.password}"
+class LoginForm(forms.ModelForm):
+    class Meta:
+        model = LoginModel
+        fields = "__all__"
