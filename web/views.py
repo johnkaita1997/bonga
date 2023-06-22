@@ -5,19 +5,15 @@ import traceback
 import openpyxl as openpyxl
 from django.contrib import messages
 from django.contrib.auth import logout, authenticate, login
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import make_password
-from django.core.mail.backends import console
 from django.db import transaction, IntegrityError
 from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
-from ipware import get_client_ip
 
 from appuser.models import AppUser
-from constants.models import Constant
 from contact.api.serializer import ContactsWeberializer
 from contact.models import Contact
 from payments.models import Transaction
@@ -1267,15 +1263,6 @@ def logoutView(request):
 
 @never_cache
 def loginhomepage(request):
-    def get_client_ip(request):
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
-        else:
-            ip = request.META.get('REMOTE_ADDR')
-        return ip
-    print(f"Ip adddress is {get_client_ip(request)}")
-
     print(f"activityName: loginhomepage")
     summarydictionary = {}
     global istheadmin
