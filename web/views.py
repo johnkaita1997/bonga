@@ -14,6 +14,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
+from ipware import get_client_ip
 
 from appuser.models import AppUser
 from constants.models import Constant
@@ -1266,6 +1267,15 @@ def logoutView(request):
 
 @never_cache
 def loginhomepage(request):
+    def get_client_ip(request):
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        return ip
+    print(f"Ip adddress is {get_client_ip(request)}")
+
     print(f"activityName: loginhomepage")
     summarydictionary = {}
     global istheadmin
@@ -2427,4 +2437,54 @@ def editGlobal(request):
     summarydictionary = getDetails(request, user)
     summarydictionary['form'] = form
     response = render(request, "editglobalsettings.html", {"summary": summarydictionary})
+    return response
+
+
+
+
+@never_cache
+def deleteAccount(request):
+    print(f"activityName: deleteAccount")
+    summarydictionary = {}
+    if request.method == 'POST':
+        form = LoginForm(data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username').strip()
+            password = form.cleaned_data.get('password').strip()
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                appuser = AppUser.objects.get(id=user.id)
+                appuser.delete()
+                if appuser.isadmin:
+                    istheadmin = True
+                    return redirect('adminhomepage')
+                elif appuser.isagent:
+                    istheadmin = False
+                    return redirect('agenthomepageminusid')
+                else:
+                    form = LoginForm()
+                    summarydictionary['form'] = form
+                    messages.error(request, f"User is neither admin nor agent {appuser}")
+                    return redirect('loginpage')
+            else:
+                form = LoginForm()
+                summarydictionary['form'] = form
+                messages.error(request, 'No account found with given username and password')
+
+        else:
+            messages.error(request, 'Invalid Form')
+            summarydictionary['form'] = form
+            return redirect('loginpage')
+    else:
+        form = LoginForm()
+        summarydictionary['form'] = form
+    response = render(request, "account.html", {"summary": summarydictionary})
+    return response
+
+
+
+@never_cache
+def privacyPolicy(request):
+    response = render(request, "privacy.html", {"summary": {}})
     return response

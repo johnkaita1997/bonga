@@ -2,19 +2,17 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.core.validators import MinValueValidator
-from django.db import IntegrityError
-from django.forms import models
+from django.db import models
 from django.forms.widgets import Select
 
 from appuser.models import AppUser
 from constants.models import Constant
 from contact.models import Contact
 from mobile.models import Mobile
-from school.models import School
 from mobile.models import SchoolWebCreate
+from school.models import School
 from student.models import Student
 from web.models import ImportStudentModel, ImportParentModel, MobileMinutes
-from django.db import models
 
 
 class AppUserBackend(ModelBackend):
@@ -289,3 +287,4 @@ class LoginForm(forms.ModelForm):
     class Meta:
         model = LoginModel
         fields = "__all__"
+

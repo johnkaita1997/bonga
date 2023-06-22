@@ -66,5 +66,7 @@ urlpatterns = [
     path('addMinutesToDevice', webviews.addMinutesToDevice, name='addMinutesToDevice'),
 
     path('global/edit', webviews.editGlobal, name='editGlobal'),
+    path('account/delete', webviews.deleteAccount, name='deleteAccount'),
+    path('privacy', webviews.privacyPolicy, name='privacyPolicy'),
 
 ]
