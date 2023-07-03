@@ -2379,8 +2379,8 @@ def editGlobal(request):
 
         if form.is_valid():
             minimum_Student_Token_Balance_To_Make_Calls = form.cleaned_data.get('minimum_Student_Token_Balance_To_Make_Calls')
-            minimum_Overall_School_Minute_Balance_To_Allow_Calls = transform_phone_number(form.cleaned_data.get('minimum_Overall_School_Minute_Balance_To_Allow_Calls'))
-            minimum_Device_Token_Balance_To_Allow_Calls = transform_phone_number(form.cleaned_data.get('minimum_Device_Token_Balance_To_Allow_Calls'))
+            minimum_Overall_School_Minute_Balance_To_Allow_Calls = form.cleaned_data.get('minimum_Overall_School_Minute_Balance_To_Allow_Calls')
+            minimum_Device_Token_Balance_To_Allow_Calls = form.cleaned_data.get('minimum_Device_Token_Balance_To_Allow_Calls')
 
             try:
                 obj, created = GlobalSettingsModel.objects.get_or_create(
