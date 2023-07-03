@@ -2,9 +2,11 @@ from django.db import models
 
 from school.models import School
 
+id = models.AutoField(primary_key=True)
+
 
 class Constant(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     activationamount = models.IntegerField(default=0, blank=True, null=True)
     tokennumber = models.IntegerField(default=1, blank=True, null=True)
     minutespertokenOrequivalentminutes = models.FloatField(max_length=255, default=0)
